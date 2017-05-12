@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Locale;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -88,9 +89,13 @@ public class PenyimpananData
     }
   }
   
-  public int getIdMusic(String music) { if (music.equals("Default")) {
+  public int getIdMusic(String music) 
+  { 
+    if (music.equals("Default")) 
+    {
       return 1;
     }
+    else {
     try
     {
       Statement stmt = koneksi.createStatement();
@@ -105,8 +110,27 @@ public class PenyimpananData
       ex.printStackTrace(); }
     return 0;
   }
-  
-
+}
+public int getIdAlarm(String alarm_name) { 
+    if (music.equals("Default")) {
+      return 1;
+    }
+    else {
+    try
+    {
+      Statement stmt = koneksi.createStatement();
+      String query = "SELECT tb_music.id_music FROM db_pengingat.tb_music WHERE tb_music.filename=\"" + music + "\"";
+      ResultSet rs = stmt.executeQuery(query);
+      System.out.println(query);
+      int no = 1;
+      
+      return rs.getInt("id_music");
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace(); }
+    return 0;
+  }
+}
 
   public void SaveAlarm(String alarm_name, String time, boolean repeat, int id_music, String day)
   {
@@ -135,4 +159,40 @@ public class PenyimpananData
       JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
     }
   }
+  public void UpdateAlarm(String alarm_name, String time, boolean repeat, int id_music, String day)
+  {
+    try
+    {
+      // UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' , `alarm_name` = 'asuuuuuu' , `time` = '01:01:03' , `repeat` = '1' , `days` = 'Tuesday Wednesday' WHERE `id_alarm` = '17';
+      Statement stmt = koneksi.createStatement();
+      String query;
+      if (repeat != true) {
+        query = "UPDATE INTO `db_pengingat`.`tb_alarm` (`enabled`, `alarm_name`, `time`, `repeat`, `id_music`) VALUES ('1', '" + alarm_name + "', '" + time + "', '0', '" + id_music + "');";
+      }
+      else {
+        query = "UPDATE `db_pengingat`.`tb_alarm` SET "
+                + "`enabled` = '0' , "
+                + "`alarm_name` = 'asuuuuuu' , "
+                + "`time` = '01:01:03' , "
+                + "`repeat` = '1' , "
+                + "`days` = 'Tuesday Wednesday' , "
+                + "`id_music` = '9'"
+                + "WHERE `id_alarm` = '17';";
+      }
+      System.out.println(query);
+      int berhasil = stmt.executeUpdate(query);
+      if (berhasil == 1)
+      {
+        JOptionPane.showMessageDialog(null, "Saved!");
+      }
+      else {
+        JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");
+      }
+    }
+    catch (SQLException ex) {
+      ex.printStackTrace();
+      JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
+    }
+  }
+  
 }

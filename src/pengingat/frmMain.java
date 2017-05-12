@@ -11,6 +11,8 @@ import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.Timer;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 /**
  *
  * @author oazisn
@@ -20,31 +22,57 @@ public class frmMain extends javax.swing.JFrame {
     /**
      * Creates new form frmMain
      */
+    DefaultTableModel dtm;
     Connection koneksi;
     public frmMain() {
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
         showData();
     }
-    DefaultTableModel dtm;
-    public void showData(){
-        String[] kolom = {"NO", "NIS","NAMA","Kelas","Jurusan"};
-        dtm = new DefaultTableModel(null, kolom);
-        try{
-            Statement stmt = koneksi.createStatement();
-            String query = "SELECT * From tb_siswa";
+    
+    public void showData() {
+        String[] kolom = { "Enabled", "Alarm Name", "Time", "Repeat", "Days", "Music" };
+        dtm = new DefaultTableModel(null, kolom){
+            @Override
+            public Class getColumnClass(int column) {
+                switch(column){
+                    case 0 : return Boolean.class;
+                    case 3 : return Boolean.class;
+                    default : return String.class;
+                }
+            }
+        };
+        try
+        {
+            java.sql.Statement stmt = koneksi.createStatement();
+            String query = "\tSELECT\n\t    `tb_alarm`.`enabled`\n\t    , `tb_alarm`.`alarm_name`\n\t    ,`tb_alarm`.`time`\t    \n\t    , `tb_alarm`.`repeat`\n\t    , `tb_alarm`.`days`\n\t    , `tb_music`.`filename`\n\tFROM\n\t    `db_pengingat`.`tb_alarm`\n\t    INNER JOIN `db_pengingat`.`tb_music` \n\t\tON (`tb_alarm`.`id_music` = `tb_music`.`id_music`);";
             ResultSet rs = stmt.executeQuery(query);
             int no = 1;
-            while (rs.next()){
-                String nis = rs.getString("nis");
-                String nama = rs.getString("nama");
-                String kelas = rs.getString("kelas");
-                String jurusan = rs.getString("jurusan");
+            while (rs.next()) {
+                boolean enabled;
+                if (rs.getInt("enabled") == 1) {
+                    enabled = true;
+                }
+                else
+                    enabled = false;
+                String days;
+                boolean repeat;
+                if (rs.getInt("repeat") == 1) {
+                    repeat = true;
+                    days = rs.getString("days");
+                }
+                else {
+                    repeat = false;
+                    days = "-";
+                }
+                String alarm_name = rs.getString("alarm_name");
+                String filename = rs.getString("filename");
+                String time = rs.getString("time");
                 
-                dtm.addRow(new String[]{no+"",nis,nama,kelas,jurusan});
+                dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
                 no++;
             }
-        } catch(SQLException ex){
+        } catch (SQLException ex) {
             ex.printStackTrace();
         }
         tbDataPengingat.setModel(dtm);
@@ -166,6 +194,23 @@ public class frmMain extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                try {
+                    // Set System L&F
+                    UIManager.setLookAndFeel(
+                            UIManager.getSystemLookAndFeelClassName());
+                }
+                catch (UnsupportedLookAndFeelException e) {
+                    // handle exception
+                }
+                catch (ClassNotFoundException e) {
+                    // handle exception
+                }
+                catch (InstantiationException e) {
+                    // handle exception
+                }
+                catch (IllegalAccessException e) {
+                    // handle exception
+                }
                 new frmMain().setVisible(true);
             }
         });

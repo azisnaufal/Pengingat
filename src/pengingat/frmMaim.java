@@ -8,6 +8,7 @@ package pengingat;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -204,9 +205,10 @@ public class frmMaim extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    
+    int baris;
     private void tbDataPengingatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataPengingatMouseClicked
         // TODO add your handling code here:
+        baris = tbDataPengingat.getSelectedRow();
     }//GEN-LAST:event_tbDataPengingatMouseClicked
     
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
@@ -216,11 +218,13 @@ public class frmMaim extends javax.swing.JFrame {
     
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-        
+        String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
+        new NewAlarm(this, true, "Edit", alarm_namee).setVisible(true);
     }//GEN-LAST:event_btnEditActionPerformed
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
+        
     }//GEN-LAST:event_btnDeleteActionPerformed
     
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
@@ -262,25 +266,21 @@ public class frmMaim extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 try {
-                    // Set cross-platform Java L&F (also called "Metal")
+                    // Set System L&F
                     UIManager.setLookAndFeel(
-                            UIManager.getCrossPlatformLookAndFeelClassName());
+                            UIManager.getSystemLookAndFeelClassName());
                 }
                 catch (UnsupportedLookAndFeelException e) {
                     // handle exception
-                    System.out.println("Unsupported Look And Feel");
                 }
                 catch (ClassNotFoundException e) {
                     // handle exception
-                    System.out.println("Class Not Found");
                 }
                 catch (InstantiationException e) {
                     // handle exception
-                    System.out.println("Instantiation Exception Error");
                 }
                 catch (IllegalAccessException e) {
                     // handle exception
-                    System.out.println("Illegal Access Exception");
                 }
                 new frmMaim().setVisible(true);
             }
