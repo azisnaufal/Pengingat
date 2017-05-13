@@ -5,6 +5,11 @@
  */
 package pengingat;
 
+import java.io.FileInputStream;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+import javazoom.jl.player.advanced.AdvancedPlayer;
+
 /**
  *
  * @author azisn
@@ -14,11 +19,38 @@ public class AlarmDialog extends javax.swing.JDialog {
     /**
      * Creates new form AlarmDialog
      */
-    public AlarmDialog(java.awt.Frame parent, boolean modal) {
+    String filedir;
+    AdvancedPlayer player;
+    AudioPlayer wavplayer;
+    public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension) {
         super(parent, modal);
         initComponents();
+        lblalarm_name.setText(alarm_name);
+        this.filedir = filedir;
+        setTitle(alarm_name);
+        if (fileextension.equals(".wav")){
+            wavplayer = new AudioPlayer(filedir);
+            wavplayer.loop();
+            wavplayer.play();
+        }
+        else{
+            Thread t = new Thread(new MyThread());
+            t.start();
+        }   
     }
-
+    public class MyThread implements Runnable {
+        public void run(){
+            try{
+                FileInputStream fis = new FileInputStream(filedir);
+                player = new AdvancedPlayer(fis);
+                player.play();
+            }
+            catch(Exception exc){
+                exc.printStackTrace();
+                System.out.println("Failed to play the file.");
+            }
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -29,16 +61,15 @@ public class AlarmDialog extends javax.swing.JDialog {
     private void initComponents() {
 
         lblalarm_name = new javax.swing.JLabel();
-        lblDeskripsi = new javax.swing.JLabel();
         btnSnooze = new javax.swing.JButton();
         btnClose = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("a");
+        setAlwaysOnTop(true);
 
         lblalarm_name.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblalarm_name.setText("Alarm_name");
-
-        lblDeskripsi.setText("jLabel1");
 
         btnSnooze.setText("Snooze");
 
@@ -58,19 +89,13 @@ public class AlarmDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnClose)
                 .addGap(61, 61, 61))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblDeskripsi)
-                .addGap(182, 182, 182))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(54, 54, 54)
+                .addGap(71, 71, 71)
                 .addComponent(lblalarm_name, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(lblDeskripsi)
-                .addGap(63, 63, 63)
+                .addGap(71, 71, 71)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSnooze)
                     .addComponent(btnClose))
@@ -108,24 +133,29 @@ public class AlarmDialog extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                AlarmDialog dialog = new AlarmDialog(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+       try {
+            // Set System L&F
+            UIManager.setLookAndFeel(
+                    UIManager.getSystemLookAndFeelClassName());
+        }
+        catch (UnsupportedLookAndFeelException e) {
+            // handle exception
+        }
+        catch (ClassNotFoundException e) {
+            // handle exception
+        }
+        catch (InstantiationException e) {
+            // handle exception
+        }
+        catch (IllegalAccessException e) {
+            // handle exception
+        }
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnSnooze;
-    private javax.swing.JLabel lblDeskripsi;
     private javax.swing.JLabel lblalarm_name;
     // End of variables declaration//GEN-END:variables
 }

@@ -25,7 +25,8 @@ public class PenyimpananData
     public Vector music = new Vector();
     Connection koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
     
-    public void SimpanFileKeDb(String dir, String file, JComboBox jcbx) { String extension = file.substring(file.lastIndexOf("."), file.length());
+    public void SimpanFileKeDb(String dir, String file, JComboBox jcbx) { 
+    String extension = file.substring(file.lastIndexOf("."), file.length());
     dir = dir.replace("\\", "\\\\");
     System.out.println(dir);
     try {

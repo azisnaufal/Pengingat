@@ -5,10 +5,13 @@
 */
 package pengingat;
 
+import java.awt.*;
+import java.awt.event.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -24,6 +27,7 @@ public class frmMain extends javax.swing.JFrame {
      * Creates new form frmMain
      */
     DefaultTableModel dtm;
+    private java.util.List<TriggerTimer> trig = new ArrayList<>();
     Connection koneksi;
     public frmMain() {
         initComponents();
@@ -47,7 +51,15 @@ public class frmMain extends javax.swing.JFrame {
         try
         {
             java.sql.Statement stmt = koneksi.createStatement();
-            String query = "\tSELECT\n\t    `tb_alarm`.`enabled`\n\t    , `tb_alarm`.`alarm_name`\n\t    ,`tb_alarm`.`time`\t    \n\t    , `tb_alarm`.`repeat`\n\t    , `tb_alarm`.`days`\n\t    , `tb_music`.`filename`\n\tFROM\n\t    `db_pengingat`.`tb_alarm`\n\t    INNER JOIN `db_pengingat`.`tb_music` \n\t\tON (`tb_alarm`.`id_music` = `tb_music`.`id_music`);";
+            String query = "SELECT    \n" +
+                    "`tb_alarm`.`enabled`   \n" +
+                    " , `tb_alarm`.`alarm_name`    \n" +
+                    " ,`tb_alarm`.`time`        \n" +
+                    " , `tb_alarm`.`repeat`    \n" +
+                    " , `tb_alarm`.`days`    \n" +
+                    " , `tb_music`.`filename`\n" +
+                    " , CONCAT(`tb_music`.`filedir`,\"\\\\\",`tb_music`.`filename`) AS filedirname\n" +
+                    "  FROM    `db_pengingat`.`tb_alarm`    INNER JOIN `db_pengingat`.`tb_music` ON (`tb_alarm`.`id_music` = `tb_music`.`id_music`)";
             ResultSet rs = stmt.executeQuery(query);
             int no = 1;
             while (rs.next()) {
@@ -70,8 +82,9 @@ public class frmMain extends javax.swing.JFrame {
                 String alarm_name = rs.getString("alarm_name");
                 String filename = rs.getString("filename");
                 String time = rs.getString("time");
-                
+                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, rs.getString("filedirname"), enabled, repeat);
                 dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
+                trig.add(trigg);
                 no++;
             }
         } catch (SQLException ex) {
@@ -178,7 +191,8 @@ public class frmMain extends javax.swing.JFrame {
         jToolBar1.add(btnRefresh);
         jToolBar1.add(jSeparator1);
 
-        jButton1.setText("Mode : Alarm");
+        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/pomodoro.png"))); // NOI18N
+        jButton1.setText("Start Pomodoro");
         jButton1.setFocusable(false);
         jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
         jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
@@ -201,15 +215,15 @@ public class frmMain extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 219, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
         );
 
         pack();
@@ -285,6 +299,57 @@ public class frmMain extends javax.swing.JFrame {
         //</editor-fold>
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                //checking for support
+                if(!SystemTray.isSupported()){
+                    System.out.println("System tray is not supported !!! ");
+                    return ;
+                }
+                //get the systemTray of the system
+                SystemTray systemTray = SystemTray.getSystemTray();
+                
+                //get default toolkit
+                //Toolkit toolkit = Toolkit.getDefaultToolkit();
+                //get image
+                //Toolkit.getDefaultToolkit().getImage("src/resources/busylogo.jpg");new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))
+                Image image = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
+                
+                //popupmenu
+                PopupMenu trayPopupMenu = new PopupMenu();
+                
+                //1t menuitem for popupmenu
+                MenuItem action = new MenuItem("Restore");
+                action.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        frmMain frame = new frmMain();
+                        frame.pack();
+                        frame.setLocationByPlatform(true);
+                        frame.setLocationRelativeTo(null);
+                        frame.setVisible(true);
+                    }
+                });
+                trayPopupMenu.add(action);
+                
+                //2nd menuitem of popupmenu
+                MenuItem close = new MenuItem("Exit");
+                close.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+                trayPopupMenu.add(close);
+                
+                //setting tray icon
+                TrayIcon trayIcon = new TrayIcon(image, "SystemTray Demo", trayPopupMenu);
+                //adjust to default size as per system recommendation
+                trayIcon.setImageAutoSize(true);
+                
+                try{
+                    systemTray.add(trayIcon);
+                }catch(AWTException awtException){
+                    awtException.printStackTrace();
+                }
                 try {
                     // Set System L&F
                     UIManager.setLookAndFeel(
