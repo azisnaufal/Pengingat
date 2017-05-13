@@ -54,6 +54,15 @@ public class NewAlarm extends javax.swing.JDialog {
         oldAlarm_name = alarm_name;
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
         action = act;
+        if (act.equals("Edit")){
+            jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))); // NOI18N
+            jLabel1.setText("Edit Alarm");
+            setTitle("Edit Existing Alarm");
+        }
+        else {
+            jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/document-new.png"))); // NOI18N
+            jLabel1.setText("Create Alarm");
+        }
         jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("MP3 Files", "mp3"));
         jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("WAV files", "wav"));
         pd.setSettingData();
@@ -173,6 +182,7 @@ public class NewAlarm extends javax.swing.JDialog {
         setTitle("Create New Alarm");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/document-new.png"))); // NOI18N
         jLabel1.setText("Create Alarm");
 
         jLabel2.setText("Alarm Name");
@@ -392,7 +402,7 @@ public class NewAlarm extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_BCancelActionPerformed
-    
+
     /**
      * @param args the command line arguments
      */

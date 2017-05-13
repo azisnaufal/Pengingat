@@ -1,56 +1,28 @@
 /*
-* To change this license header, choose License Headers in Project Properties.
-* To change this template file, choose Tools | Templates
-* and open the template in the editor.
-*/
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package pengingat;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.BoundedRangeModel;
 import javax.swing.JOptionPane;
-import javax.swing.JSlider;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 
 /**
  *
- * @author Hakaze
+ * @author azisn
  */
+public class Setting extends javax.swing.JDialog {
 
-
-public class Setting extends javax.swing.JFrame {
-    
     /**
      * Creates new form Setting
      */
-//    class BoundedChangeListener implements ChangeListener {
-//        public void stateChanged(ChangeEvent changeEvent) {
-//            Object source = changeEvent.getSource();
-//            if (source instanceof BoundedRangeModel) {
-//                BoundedRangeModel aModel = (BoundedRangeModel) source;
-//                if (!aModel.getValueIsAdjusting()) {
-////                    System.out.println("Changed: " + aModel.getValue());
-//lblVolume.setText(aModel.getValue()+"%");
-//                }
-//            } else if (source instanceof JSlider) {
-//                JSlider theJSlider = (JSlider) source;
-//                if (!theJSlider.getValueIsAdjusting()) {
-////                    System.out.println("Slider changed: " + theJSlider.getValue());
-//lblVolume.setText(theJSlider.getValue()+"%");
-//                }
-//            } else {
-//                System.out.println("Something changed: " + source);
-//            }
-//        }
-//    }
     Connection koneksi;
-    public Setting() {
+    public Setting(java.awt.Frame parent, boolean modal) {
+        super(parent, modal);
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
         showData();
@@ -73,7 +45,6 @@ public class Setting extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -97,10 +68,11 @@ public class Setting extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Setting\n");
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Setting");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/preferences-other.png"))); // NOI18N
         jLabel1.setText("Setting");
 
         jLabel2.setText("Silence After");
@@ -119,8 +91,18 @@ public class Setting extends javax.swing.JFrame {
         });
 
         jButton2.setText("Apply");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Cancel");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jsSilenceAfter.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
         jsSilenceAfter.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
@@ -213,12 +195,45 @@ public class Setting extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+
+        int silence_after = Integer.parseInt(jsSilenceAfter.getValue()+"");
+        int snooze_length = Integer.parseInt(jsSnoozeLength.getValue()+"");
+        //        int volume = Integer.parseInt(jslVolume.getValue()+"");
+        String StartWeekOn = cbxStartWeekOn.getSelectedItem().toString();
+
+        if (snooze_length < 0 || silence_after < 0){
+            JOptionPane.showMessageDialog(null, "Invalid Snooze Length or Silence After Value");
+        }
+        else {
+            try{
+                Statement stmt = koneksi.createStatement();
+                String query = "UPDATE `tb_setting` SET `silence_after` = "+silence_after+", `snooze_length` = "+snooze_length+", `start_week_on` = '"+StartWeekOn+"' WHERE `id_setting` = 1";
+                System.out.println(query);
+                int berhasil = stmt.executeUpdate(query);
+                if (berhasil == 1){
+                    JOptionPane.showMessageDialog(null, "Data berhasil diubah");
+                    dispose();
+                }
+                else {
+                    JOptionPane.showMessageDialog(null, "Data gagal diubah");
+                }
+            }
+            catch(SQLException ex){
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Terjadi kesalahan pada query");
+            }
+        }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     private void jsSilenceAfterMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jsSilenceAfterMouseWheelMoved
         // TODO add your handling code here:
         int notches = evt.getWheelRotation();
         if (notches < 0) {
             jsSilenceAfter.setValue(Integer.parseInt(jsSilenceAfter.getValue().toString()) + 1);
-        } 
+        }
         else if (notches > 0) {
             jsSilenceAfter.setValue(Integer.parseInt(jsSilenceAfter.getValue().toString()) - 1);
         }
@@ -234,15 +249,19 @@ public class Setting extends javax.swing.JFrame {
             jsSnoozeLength.setValue(Integer.parseInt(jsSnoozeLength.getValue().toString()) - 1);
         }
     }//GEN-LAST:event_jsSnoozeLengthMouseWheelMoved
-    
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        
+        dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
         int silence_after = Integer.parseInt(jsSilenceAfter.getValue()+"");
         int snooze_length = Integer.parseInt(jsSnoozeLength.getValue()+"");
-//        int volume = Integer.parseInt(jslVolume.getValue()+"");
+        //        int volume = Integer.parseInt(jslVolume.getValue()+"");
         String StartWeekOn = cbxStartWeekOn.getSelectedItem().toString();
-        
+
         if (snooze_length < 0 || silence_after < 0){
             JOptionPane.showMessageDialog(null, "Invalid Snooze Length or Silence After Value");
         }
@@ -254,6 +273,7 @@ public class Setting extends javax.swing.JFrame {
                 int berhasil = stmt.executeUpdate(query);
                 if (berhasil == 1){
                     JOptionPane.showMessageDialog(null, "Data berhasil diubah");
+                
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Data gagal diubah");
@@ -264,10 +284,8 @@ public class Setting extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Terjadi kesalahan pada query");
             }
         }
-        
-    
-    }//GEN-LAST:event_jButton1ActionPerformed
-    
+    }//GEN-LAST:event_jButton2ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -275,8 +293,8 @@ public class Setting extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-        * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
-        */
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -294,32 +312,23 @@ public class Setting extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Setting.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-        
-        /* Create and display the form */
+        //</editor-fold>
+
+        /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                try {
-                    // Set System L&F
-                    UIManager.setLookAndFeel(
-                            UIManager.getSystemLookAndFeelClassName());
-                }
-                catch (UnsupportedLookAndFeelException e) {
-                    // handle exception
-                }
-                catch (ClassNotFoundException e) {
-                    // handle exception
-                }
-                catch (InstantiationException e) {
-                    // handle exception
-                }
-                catch (IllegalAccessException e) {
-                    // handle exception
-                }
-                new Setting().setVisible(true);
+                Setting dialog = new Setting(new javax.swing.JFrame(), true);
+                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+                    @Override
+                    public void windowClosing(java.awt.event.WindowEvent e) {
+                        System.exit(0);
+                    }
+                });
+                dialog.setVisible(true);
             }
         });
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cbxStartWeekOn;
     private javax.swing.JButton jButton1;
