@@ -19,22 +19,24 @@ public class AlarmDialog extends javax.swing.JDialog {
     /**
      * Creates new form AlarmDialog
      */
-    String filedir;
+    String filedir, fileextension;
     AdvancedPlayer player;
     AudioPlayer wavplayer;
+    Thread t;
     public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension) {
         super(parent, modal);
         initComponents();
         lblalarm_name.setText(alarm_name);
         this.filedir = filedir;
         setTitle(alarm_name);
+        this.fileextension = fileextension;
         if (fileextension.equals(".wav")){
             wavplayer = new AudioPlayer(filedir);
             wavplayer.loop();
             wavplayer.play();
         }
         else{
-            Thread t = new Thread(new MyThread());
+            t = new Thread(new MyThread());
             t.start();
         }   
     }
@@ -67,6 +69,11 @@ public class AlarmDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("a");
         setAlwaysOnTop(true);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         lblalarm_name.setFont(new java.awt.Font("Tahoma", 1, 20)); // NOI18N
         lblalarm_name.setText("Alarm_name");
@@ -74,6 +81,11 @@ public class AlarmDialog extends javax.swing.JDialog {
         btnSnooze.setText("Snooze");
 
         btnClose.setText("Close");
+        btnClose.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCloseActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -104,6 +116,29 @@ public class AlarmDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnCloseActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCloseActionPerformed
+        // TODO add your handling code here:
+        if (fileextension.equals(".wav")){
+            wavplayer.stop();
+        }
+        else{
+            t.stop();
+        }   
+        dispose();
+        //terus alter enabled jadi 0;
+    }//GEN-LAST:event_btnCloseActionPerformed
+
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        // TODO add your handling code here:
+        if (fileextension.equals(".wav")){
+            wavplayer.stop();
+        }
+        else{
+            t.stop();
+        }
+        //terus alter enabled jadi 0;
+    }//GEN-LAST:event_formWindowClosing
 
     /**
      * @param args the command line arguments

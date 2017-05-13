@@ -114,7 +114,9 @@ public class TriggerTimer {
                             if(getCurrentTimeStamp().equals(getTime())){
                                 //                    Notification myNotification = new Notification(judul, deskripsi, "dialog-information"); // create the notification object
                                 //                    myNotification.show();
-                                new AlarmDialog(null, true, judul, filedirMusic, fileextension);
+                                AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension);
+                                d.setLocationRelativeTo(null);
+                                d.setVisible(true);
                                 System.out.println(judul);
                                 t.cancel(); // buat keluar dari looping yang menyebalkan ini.
                             }
@@ -123,8 +125,11 @@ public class TriggerTimer {
                     if(getCurrentTimeStamp().equals(getTime())){
     //                    Notification myNotification = new Notification(judul, deskripsi, "dialog-information"); // create the notification object
     //                    myNotification.show();
-                        new AlarmDialog(null, true, judul, filedirMusic, fileextension);
+                        //new AlarmDialog(null, true, judul, filedirMusic, fileextension).setVisible(true);
                         System.out.println(judul);
+                        AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension);
+                                d.setLocationRelativeTo(null);
+                                d.setVisible(true);
                         t.cancel(); // buat keluar dari looping yang menyebalkan ini.
                     }
                 }
