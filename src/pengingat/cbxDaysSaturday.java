@@ -121,7 +121,37 @@ public class cbxDaysSaturday extends javax.swing.JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-
+    public void DayChecker(String days){
+        if (days.contains("Sunday")){
+            CBSunday.setSelected(true);
+            //day+= "Sunday ";
+        }
+        if (days.contains("Monday")){
+            CBMonday.setSelected(true);
+            //day += "Monday ";
+        }
+        if (days.contains("Tuesday")){
+            CBTuesday.setSelected(true);
+            //day += "Tuesday ";
+        }
+        if (days.contains("Wednesday")){
+            CBWednesday.setSelected(true);
+            //day += "Wednesday ";
+        }
+        if (days.contains("Thursday")){
+            CBThursday.setSelected(true);
+            //day += "Thursday ";
+        }
+        if (days.contains("Friday")){
+            CBFriday.setSelected(true);
+            //day += "Friday ";
+        }
+        if (days.contains("Saturday")){
+            CBSaturday.setSelected(true);
+            //day += "Saturday ";
+        }
+        System.out.println(days);
+    }
     private void CBSaturdayActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CBSaturdayActionPerformed
         // TODO add your handling code here:
         if (arrDay[0] == 0){

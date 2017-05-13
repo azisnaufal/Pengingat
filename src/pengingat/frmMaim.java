@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -28,6 +29,7 @@ public class frmMaim extends javax.swing.JFrame {
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
         showData();
+        
     }
     
     public void showData() {
@@ -220,15 +222,21 @@ public class frmMaim extends javax.swing.JFrame {
         // TODO add your handling code here:
         String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
         new NewAlarm(this, true, "Edit", alarm_namee).setVisible(true);
+        
     }//GEN-LAST:event_btnEditActionPerformed
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-        
+        PenyimpananData pd = new PenyimpananData();
+        int id_alarm = pd.getIdAlarm(tbDataPengingat.getValueAt(baris, 1).toString());
+        pd.deleteAlarm(id_alarm);
+        dtm.getDataVector().removeAllElements();
+        showData();
     }//GEN-LAST:event_btnDeleteActionPerformed
     
     private void btnRefreshActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRefreshActionPerformed
         // TODO add your handling code here:
+        dtm.getDataVector().removeAllElements();
         showData();
     }//GEN-LAST:event_btnRefreshActionPerformed
     

@@ -47,19 +47,21 @@ public class NewAlarm extends javax.swing.JDialog {
     cbxDaysSaturday cdmSaturday = new cbxDaysSaturday();
     cbxDaysSundays cdmSundays = new cbxDaysSundays();
     cbxDaysMonday cdmMonday = new cbxDaysMonday();
+    String oldAlarm_name;
     public NewAlarm(java.awt.Frame parent, boolean modal, String act, String alarm_name) {
         super(parent, modal);
         initComponents();
+        oldAlarm_name = alarm_name;
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
         action = act;
         jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("MP3 Files", "mp3"));
         jFileChooser1.addChoosableFileFilter(new FileNameExtensionFilter("WAV files", "wav"));
         pd.setSettingData();
-        jcbxEnabled.setVisible(false);
-        setJPane();
+        cbxEnabled.setVisible(false);
         jpDays.setVisible(false);
         lblDays.setVisible(false);
         loadMusic();
+        setJPane();
         if (act == "Edit"){
             showData(alarm_name);
         }
@@ -68,7 +70,7 @@ public class NewAlarm extends javax.swing.JDialog {
         CBMusic.setModel(pd.setMusictoCbx());
     }
     private void showData(String alarm_name){
-        jcbxEnabled.setVisible(true);
+        cbxEnabled.setVisible(true);
         try {
             Statement stmt = koneksi.createStatement();
             String query = "	SELECT\n" +
@@ -76,24 +78,30 @@ public class NewAlarm extends javax.swing.JDialog {
             ResultSet rs = stmt.executeQuery(query);
             while(rs.next()){
                 if(rs.getInt("enabled") == 1){
-                    jcbxEnabled.setSelected(true);
+                    cbxEnabled.setSelected(true);
                 }
                 else{
-                    jcbxEnabled.setSelected(false);
+                    cbxEnabled.setSelected(false);
                 }
                 TBAlarmName.setText(rs.getString("alarm_name"));
                 String dbTime = rs.getString("time");
                 Date date = new SimpleDateFormat("HH:mm:ss").parse(dbTime);
                 Time.setValue(date);
                 pd.days = rs.getString("days");
-//                cbxhari masih belum
                 
                 if(rs.getInt("repeat") == 1){
+                    setJPane();
                     chkRepeat.setSelected(true);
+                    jpDays.setVisible(true);
+                    lblDays.setVisible(true);
+                    
                 }
                 else{
                     chkRepeat.setSelected(false);
+                    jpDays.setVisible(false);
+                    lblDays.setVisible(false);
                 }
+                
                 if (rs.getString("filename") == "Alarm02.wav"){
                     CBMusic.setSelectedItem("Default");
                 }
@@ -111,13 +119,19 @@ public class NewAlarm extends javax.swing.JDialog {
     }
     private void setJPane(){
         if (pd.StartWeekOn.equals("Saturday")){
+            cdmSaturday.DayChecker(pd.days);
             jpDays.add(cdmSaturday, "yes");
+            //System.out.println(pd.days);
         }
         else if (pd.StartWeekOn.equals("Sunday")){
+            cdmSundays.DayChecker(pd.days);
             jpDays.add(cdmSundays, "yes");
+            //System.out.println(pd.days);
         }
         else if (pd.StartWeekOn.equals("Monday")){
+            cdmMonday.DayChecker(pd.days);
             jpDays.add(cdmMonday, "yes");
+            //System.out.println(pd.days);
         }
         else {
             System.out.println("Failed to fetch setting \"Start Week On\", switch to fallback mode!");
@@ -151,7 +165,7 @@ public class NewAlarm extends javax.swing.JDialog {
         BOK = new javax.swing.JButton();
         jpDays = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
-        jcbxEnabled = new javax.swing.JCheckBox();
+        cbxEnabled = new javax.swing.JCheckBox();
 
         jFileChooser1.setAcceptAllFileFilterUsed(false);
 
@@ -206,7 +220,7 @@ public class NewAlarm extends javax.swing.JDialog {
         jpDays.setMinimumSize(new java.awt.Dimension(469, 0));
         jpDays.setLayout(new java.awt.CardLayout());
 
-        jcbxEnabled.setText("Enabled");
+        cbxEnabled.setText("Enabled");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -223,7 +237,7 @@ public class NewAlarm extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel1)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jcbxEnabled)
+                                .addComponent(cbxEnabled)
                                 .addGap(21, 21, 21))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -263,7 +277,7 @@ public class NewAlarm extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jcbxEnabled))
+                    .addComponent(cbxEnabled))
                 .addGap(4, 4, 4)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(3, 3, 3)
@@ -347,7 +361,7 @@ public class NewAlarm extends javax.swing.JDialog {
         //get pd.days;
         //}
         System.out.println(CBMusic.getSelectedItem().toString());
-        if (action == "Tambah"){
+        if (action.equals("Tambah")){
             if (pd.StartWeekOn.equals("Saturday")){
                 pd.SaveAlarm(alarm_name, time, chkRepeat.isSelected(), pd.getIdMusic(CBMusic.getSelectedItem().toString()), cdmSaturday.day);
             }
@@ -358,8 +372,18 @@ public class NewAlarm extends javax.swing.JDialog {
                 pd.SaveAlarm(alarm_name, time, chkRepeat.isSelected(), pd.getIdMusic(CBMusic.getSelectedItem().toString()), cdmMonday.day);
             }
         }
-        else if (action == "Edit"){
-            //update db
+        else if (action.equals("Edit")){
+            if (pd.StartWeekOn.equals("Saturday")){
+                pd.UpdateAlarm(pd.getIdAlarm(oldAlarm_name), cbxEnabled.isSelected(), alarm_name, time, chkRepeat.isSelected(), pd.getIdMusic(CBMusic.getSelectedItem().toString()), cdmSaturday.day);
+                
+            }
+            else if (pd.StartWeekOn.equals("Sunday")){
+                pd.UpdateAlarm(pd.getIdAlarm(oldAlarm_name), cbxEnabled.isSelected(), alarm_name, time, chkRepeat.isSelected(), pd.getIdMusic(CBMusic.getSelectedItem().toString()), cdmSundays.day);
+            }
+            else if (pd.StartWeekOn.equals("Monday")){
+                pd.UpdateAlarm(pd.getIdAlarm(oldAlarm_name), cbxEnabled.isSelected(), alarm_name, time, chkRepeat.isSelected(), pd.getIdMusic(CBMusic.getSelectedItem().toString()), cdmMonday.day);
+            }
+            
         }
         this.dispose();
     }//GEN-LAST:event_BOKActionPerformed
@@ -422,6 +446,7 @@ public class NewAlarm extends javax.swing.JDialog {
     private javax.swing.JComboBox<String> CBMusic;
     private javax.swing.JTextField TBAlarmName;
     private javax.swing.JSpinner Time;
+    private javax.swing.JCheckBox cbxEnabled;
     private javax.swing.JCheckBox chkRepeat;
     private javax.swing.JFileChooser jFileChooser1;
     private javax.swing.JLabel jLabel1;
@@ -430,7 +455,6 @@ public class NewAlarm extends javax.swing.JDialog {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JCheckBox jcbxEnabled;
     private javax.swing.JPanel jpDays;
     private javax.swing.JLabel lblDays;
     // End of variables declaration//GEN-END:variables
