@@ -18,7 +18,7 @@ public class cbxDaysMonday extends javax.swing.JPanel {
         initComponents();
     }
     public String day="";
-    int[] arrDay = new int[6];
+    int[] arrDay = new int[7];
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always

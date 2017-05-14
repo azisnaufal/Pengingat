@@ -41,18 +41,19 @@ public class NewAlarm extends javax.swing.JDialog {
     /**
      * Creates new form NewAlarm
      */
-    PenyimpananData pd = new PenyimpananData();
+    PenyimpananData pd ;
     String action;
     Connection koneksi;
     cbxDaysSaturday cdmSaturday = new cbxDaysSaturday();
     cbxDaysSundays cdmSundays = new cbxDaysSundays();
     cbxDaysMonday cdmMonday = new cbxDaysMonday();
     String oldAlarm_name;
-    public NewAlarm(java.awt.Frame parent, boolean modal, String act, String alarm_name) {
+    public NewAlarm(java.awt.Frame parent, boolean modal, String act, String alarm_name, Connection koneksii) {
         super(parent, modal);
         initComponents();
         oldAlarm_name = alarm_name;
-        koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+        koneksi = koneksii;
+        pd = new PenyimpananData(koneksi);
         action = act;
         if (act.equals("Edit")){
             jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))); // NOI18N

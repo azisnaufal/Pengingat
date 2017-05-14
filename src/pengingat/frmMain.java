@@ -27,11 +27,13 @@ public class frmMain extends javax.swing.JFrame {
      * Creates new form frmMain
      */
     DefaultTableModel dtm;
+    PenyimpananData pd;
     private java.util.List<TriggerTimer> trig = new ArrayList<>();
     Connection koneksi;
     public frmMain() {
         initComponents();
         koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+        pd = new PenyimpananData(koneksi);
         showData();
         
     }
@@ -61,7 +63,7 @@ public class frmMain extends javax.swing.JFrame {
                     " , CONCAT(`tb_music`.`filedir`,\"\\\\\",`tb_music`.`filename`) AS filedirname\n" +
                     "  FROM    `db_pengingat`.`tb_alarm`    INNER JOIN `db_pengingat`.`tb_music` ON (`tb_alarm`.`id_music` = `tb_music`.`id_music`)";
             ResultSet rs = stmt.executeQuery(query);
-            int no = 1;
+            int no = 0;
             while (rs.next()) {
                 boolean enabled;
                 if (rs.getInt("enabled") == 1) {
@@ -80,11 +82,12 @@ public class frmMain extends javax.swing.JFrame {
                     days = "-";
                 }
                 String alarm_name = rs.getString("alarm_name");
-                String filename = rs.getString("filename");
+                String filename = rs.getString("filedirname");
                 String time = rs.getString("time");
-                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, rs.getString("filedirname"), enabled, repeat);
+                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi);
                 dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
                 trig.add(trigg);
+                trig.get(no).update(time, alarm_name, days, filename, enabled, repeat);
                 no++;
             }
         } catch (SQLException ex) {
@@ -117,6 +120,8 @@ public class frmMain extends javax.swing.JFrame {
         jButton1 = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         btnSetting = new javax.swing.JButton();
+        jSeparator3 = new javax.swing.JToolBar.Separator();
+        btnExit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pengingat");
@@ -140,6 +145,7 @@ public class frmMain extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tbDataPengingat);
 
+        jToolBar1.setFloatable(false);
         jToolBar1.setRollover(true);
 
         btnNew.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/document-new.png"))); // NOI18N
@@ -210,6 +216,19 @@ public class frmMain extends javax.swing.JFrame {
             }
         });
         jToolBar1.add(btnSetting);
+        jToolBar1.add(jSeparator3);
+
+        btnExit.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/application-exit.png"))); // NOI18N
+        btnExit.setText("Exit");
+        btnExit.setFocusable(false);
+        btnExit.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnExit.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnExit.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExitActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnExit);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -232,26 +251,41 @@ public class frmMain extends javax.swing.JFrame {
     private void tbDataPengingatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataPengingatMouseClicked
         // TODO add your handling code here:
         baris = tbDataPengingat.getSelectedRow();
+        
     }//GEN-LAST:event_tbDataPengingatMouseClicked
     
     private void btnNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNewActionPerformed
         // TODO add your handling code here:
-        NewAlarm d = new NewAlarm(this, true, "Tambah", "");
+        NewAlarm d = new NewAlarm(this, true, "Tambah", "", koneksi);
         d.setLocationRelativeTo(this);
         d.setVisible(true);
+        dtm.getDataVector().removeAllElements();
+        showData();
     }//GEN-LAST:event_btnNewActionPerformed
     
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
         String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
-        NewAlarm frame = new NewAlarm(this, true, "Edit", alarm_namee);
+        NewAlarm frame = new NewAlarm(this, true, "Edit", alarm_namee, koneksi);
         frame.setLocationRelativeTo(this);
         frame.setVisible(true);
+        dtm.getDataVector().removeAllElements();
+        showData();
+        boolean enabled = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 0).toString());
+        String time = tbDataPengingat.getValueAt(baris, 2).toString();
+        boolean repeat = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 4).toString());
+        String dayss = tbDataPengingat.getValueAt(baris, 4).toString();
+        String filedirname = tbDataPengingat.getValueAt(baris, 5).toString();
+        trig.get(baris).update(time, alarm_namee, dayss, filedirname, enabled, repeat);
     }//GEN-LAST:event_btnEditActionPerformed
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
         // TODO add your handling code here:
-        PenyimpananData pd = new PenyimpananData();
+        String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
+        String time = tbDataPengingat.getValueAt(baris, 2).toString();
+        String dayss = tbDataPengingat.getValueAt(baris, 4).toString();
+        String filedirname = tbDataPengingat.getValueAt(baris, 5).toString();
+        trig.get(baris).update(time, alarm_namee, dayss, filedirname, false, false);
         int id_alarm = pd.getIdAlarm(tbDataPengingat.getValueAt(baris, 1).toString());
         pd.deleteAlarm(id_alarm);
         dtm.getDataVector().removeAllElements();
@@ -266,10 +300,19 @@ public class frmMain extends javax.swing.JFrame {
     
     private void btnSettingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSettingActionPerformed
         // TODO add your handling code here:
-        Setting s = new Setting(this, true);
+        Setting s = new Setting(this, true, koneksi);
         s.setLocationRelativeTo(this);
         s.setVisible(true);
     }//GEN-LAST:event_btnSettingActionPerformed
+
+    private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
+        // TODO add your handling code here:
+        int dialogButton = JOptionPane.YES_NO_OPTION;
+        int dialogResult = JOptionPane.showConfirmDialog (this, "Are you sure?","Warning",dialogButton);
+        if (dialogResult == JOptionPane.YES_OPTION){
+            System.exit(0);
+        }
+    }//GEN-LAST:event_btnExitActionPerformed
     
     /**
      * @param args the command line arguments
@@ -341,7 +384,7 @@ public class frmMain extends javax.swing.JFrame {
                 trayPopupMenu.add(close);
                 
                 //setting tray icon
-                TrayIcon trayIcon = new TrayIcon(image, "SystemTray Demo", trayPopupMenu);
+                TrayIcon trayIcon = new TrayIcon(image, "Pengingat", trayPopupMenu);
                 //adjust to default size as per system recommendation
                 trayIcon.setImageAutoSize(true);
                 
@@ -380,6 +423,7 @@ public class frmMain extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnEdit;
+    private javax.swing.JButton btnExit;
     private javax.swing.JButton btnNew;
     private javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSetting;
@@ -387,6 +431,7 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
+    private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JTable tbDataPengingat;
     // End of variables declaration//GEN-END:variables

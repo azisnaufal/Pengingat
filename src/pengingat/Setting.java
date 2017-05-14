@@ -21,10 +21,10 @@ public class Setting extends javax.swing.JDialog {
      * Creates new form Setting
      */
     Connection koneksi;
-    public Setting(java.awt.Frame parent, boolean modal) {
+    public Setting(java.awt.Frame parent, boolean modal, Connection koneksii) {
         super(parent, modal);
         initComponents();
-        koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+        koneksi = koneksii;
         showData();
     }
     public void showData(){
@@ -315,18 +315,7 @@ public class Setting extends javax.swing.JDialog {
         //</editor-fold>
 
         /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                Setting dialog = new Setting(new javax.swing.JFrame(), true);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

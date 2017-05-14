@@ -23,8 +23,32 @@ public class PenyimpananData
     
     public String days = "";
     public Vector music = new Vector();
-    Connection koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
-    
+    Connection koneksi;
+    public PenyimpananData(Connection koneksii){
+        this.koneksi = koneksii;
+    }
+    public void disableAlarm(int id_alarm){
+        //UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' WHERE `id_alarm` = '22'; 
+        try
+        {
+            // UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' , `alarm_name` = 'asuuuuuu' , `time` = '01:01:03' , `repeat` = '1' , `days` = 'Tuesday Wednesday' WHERE `id_alarm` = '17';
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' WHERE `id_alarm` = '"+id_alarm+"';";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if (berhasil == 1)
+            {
+                System.out.println("Disable sukses");
+            }
+            else {
+                System.out.println("Disable gagal");
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
+        }
+    }
     public void SimpanFileKeDb(String dir, String file, JComboBox jcbx) { 
     String extension = file.substring(file.lastIndexOf("."), file.length());
     dir = dir.replace("\\", "\\\\");
@@ -140,13 +164,13 @@ public class PenyimpananData
                 query = "INSERT INTO `db_pengingat`.`tb_alarm` (`enabled`, `alarm_name`, `time`, `repeat`, `id_music`) VALUES ('1', '" + alarm_name + "', '" + time + "', '0', '" + id_music + "');";
             }
             else {
-                query = "INSERT INTO `db_pengingat`.`tb_alarm` (`enabled`, `alarm_name`, `time`, `repeat`, `days`, `id_music`) VALUES ('0', '" + alarm_name + "', '" + time + "', '1', '" + day + "', '" + id_music + "');";
+                query = "INSERT INTO `db_pengingat`.`tb_alarm` (`enabled`, `alarm_name`, `time`, `repeat`, `days`, `id_music`) VALUES ('1', '" + alarm_name + "', '" + time + "', '1', '" + day + "', '" + id_music + "');";
             }
             System.out.println(query);
             int berhasil = stmt.executeUpdate(query);
             if (berhasil == 1)
             {
-                JOptionPane.showMessageDialog(null, "Saved! Please refresh data to take effect");
+                JOptionPane.showMessageDialog(null, "Saved!");
             }
             else {
                 JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");
@@ -192,7 +216,7 @@ public class PenyimpananData
             int berhasil = stmt.executeUpdate(query);
             if (berhasil == 1)
             {
-                JOptionPane.showMessageDialog(null, "Saved! Please refresh data to take effect");
+                JOptionPane.showMessageDialog(null, "Saved!");
             }
             else {
                 JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");

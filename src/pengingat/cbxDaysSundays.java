@@ -15,7 +15,7 @@ public class cbxDaysSundays extends javax.swing.JPanel {
      * Creates new form cbxDays
      */
     public String day="";
-    int[] arrDay = new int[6];
+    int[] arrDay = new int[7];
     public cbxDaysSundays() {
         initComponents();
     }
