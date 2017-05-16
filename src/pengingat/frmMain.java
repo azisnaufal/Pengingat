@@ -39,6 +39,13 @@ public class frmMain extends javax.swing.JFrame {
     }
     
     public void showData() {
+        if (!trig.isEmpty()){
+            int i  = 0;
+            for (i = 0;i<trig.size();i++){
+                trig.get(i).doCancel();
+            }
+            
+        }
         String[] kolom = { "Enabled", "Alarm Name", "Time", "Repeat", "Days", "Music" };
         dtm = new DefaultTableModel(null, kolom){
             @Override
@@ -271,12 +278,12 @@ public class frmMain extends javax.swing.JFrame {
         frame.setVisible(true);
         dtm.getDataVector().removeAllElements();
         showData();
-        boolean enabled = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 0).toString());
-        String time = tbDataPengingat.getValueAt(baris, 2).toString();
-        boolean repeat = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 4).toString());
-        String dayss = tbDataPengingat.getValueAt(baris, 4).toString();
-        String filedirname = tbDataPengingat.getValueAt(baris, 5).toString();
-        trig.get(baris).update(time, alarm_namee, dayss, filedirname, enabled, repeat);
+//        boolean enabled = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 0).toString());
+//        String time = tbDataPengingat.getValueAt(baris, 2).toString();
+//        boolean repeat = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 4).toString());
+//        String dayss = tbDataPengingat.getValueAt(baris, 4).toString();
+//        String filedirname = tbDataPengingat.getValueAt(baris, 5).toString();
+//        trig.get(baris).update(time, alarm_namee, dayss, filedirname, enabled, repeat);
     }//GEN-LAST:event_btnEditActionPerformed
     
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
