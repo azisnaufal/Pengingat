@@ -36,6 +36,8 @@ public class Setting extends javax.swing.JDialog {
             while (rs.next()){
                 jsSilenceAfter.setValue(rs.getInt("silence_after"));
                 jsSnoozeLength.setValue(rs.getInt("snooze_length"));
+                jsPomodoroDuration.setValue(rs.getInt("pomo_length"));
+                jsPomodoroBreakDuration.setValue(rs.getInt("pomo_break"));
 //                jslVolume.setValue(rs.getInt("volume"));
 //                lblVolume.setText(rs.getInt("volume")+"%");
                 cbxStartWeekOn.setSelectedItem(rs.getString("start_week_on"));
@@ -67,6 +69,13 @@ public class Setting extends javax.swing.JDialog {
         jsSnoozeLength = new javax.swing.JSpinner();
         jLabel8 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
+        jsPomodoroDuration = new javax.swing.JSpinner();
+        jLabel9 = new javax.swing.JLabel();
+        jLabel10 = new javax.swing.JLabel();
+        jsPomodoroBreakDuration = new javax.swing.JSpinner();
+        jLabel11 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Setting");
@@ -122,6 +131,28 @@ public class Setting extends javax.swing.JDialog {
 
         jLabel8.setText("Minute");
 
+        jLabel6.setText("Pomodoro Duration");
+
+        jsPomodoroDuration.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        jsPomodoroDuration.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                jsPomodoroDurationMouseWheelMoved(evt);
+            }
+        });
+
+        jLabel9.setText("Minute");
+
+        jLabel10.setText("Break Duration");
+
+        jsPomodoroBreakDuration.setModel(new javax.swing.SpinnerNumberModel(1, 1, null, 1));
+        jsPomodoroBreakDuration.addMouseWheelListener(new java.awt.event.MouseWheelListener() {
+            public void mouseWheelMoved(java.awt.event.MouseWheelEvent evt) {
+                jsPomodoroBreakDurationMouseWheelMoved(evt);
+            }
+        });
+
+        jLabel11.setText("Minute");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -129,35 +160,52 @@ public class Setting extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbxStartWeekOn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(18, 18, 18))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jLabel2)
-                                .addGap(28, 28, 28)))
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jsSnoozeLength, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                            .addComponent(jsSilenceAfter))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton3))
+                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)))
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel5)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbxStartWeekOn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jLabel3)
+                                        .addGap(18, 18, 18))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel2)
+                                        .addGap(28, 28, 28)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jsSilenceAfter, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
+                                    .addComponent(jsSnoozeLength))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.TRAILING)))
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 357, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel6)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(jsPomodoroDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jsPomodoroBreakDuration, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9)
+                                    .addComponent(jLabel11))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -172,24 +220,33 @@ public class Setting extends javax.swing.JDialog {
                     .addComponent(jLabel2)
                     .addComponent(jsSilenceAfter, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(2, 2, 2)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jsSnoozeLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel8))))
+                .addGap(8, 8, 8)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jsSnoozeLength, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel8)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbxStartWeekOn, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel6)
+                    .addComponent(jsPomodoroDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel9))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(jsPomodoroBreakDuration, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel11))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton1)
                     .addComponent(jButton2)
                     .addComponent(jButton3))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -197,19 +254,25 @@ public class Setting extends javax.swing.JDialog {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-
         int silence_after = Integer.parseInt(jsSilenceAfter.getValue()+"");
         int snooze_length = Integer.parseInt(jsSnoozeLength.getValue()+"");
         //        int volume = Integer.parseInt(jslVolume.getValue()+"");
         String StartWeekOn = cbxStartWeekOn.getSelectedItem().toString();
-
-        if (snooze_length < 0 || silence_after < 0){
+        int pomodoro_duration = Integer.parseInt(jsPomodoroDuration.getValue()+"");
+        int break_duration = Integer.parseInt(jsPomodoroBreakDuration.getValue()+"");
+        
+        if (snooze_length < 0 || silence_after < 0 || pomodoro_duration < 0 ||  break_duration < 0){
             JOptionPane.showMessageDialog(null, "Invalid Snooze Length or Silence After Value");
         }
         else {
             try{
                 Statement stmt = koneksi.createStatement();
-                String query = "UPDATE `tb_setting` SET `silence_after` = "+silence_after+", `snooze_length` = "+snooze_length+", `start_week_on` = '"+StartWeekOn+"' WHERE `id_setting` = 1";
+                String query = "UPDATE `tb_setting` SET "
+                        + "`silence_after` = "+silence_after+", "
+                        + "`snooze_length` = "+snooze_length+", "
+                        + "`start_week_on` = '"+StartWeekOn+"', "
+                        + "`pomo_length` = '"+pomodoro_duration+"',"
+                        + "`pomo_break` = '"+break_duration+" WHERE `id_setting` = 1";
                 System.out.println(query);
                 int berhasil = stmt.executeUpdate(query);
                 if (berhasil == 1){
@@ -261,19 +324,25 @@ public class Setting extends javax.swing.JDialog {
         int snooze_length = Integer.parseInt(jsSnoozeLength.getValue()+"");
         //        int volume = Integer.parseInt(jslVolume.getValue()+"");
         String StartWeekOn = cbxStartWeekOn.getSelectedItem().toString();
-
-        if (snooze_length < 0 || silence_after < 0){
+        int pomodoro_duration = Integer.parseInt(jsPomodoroDuration.getValue()+"");
+        int break_duration = Integer.parseInt(jsPomodoroBreakDuration.getValue()+"");
+        
+        if (snooze_length < 0 || silence_after < 0 || pomodoro_duration < 0 ||  break_duration < 0){
             JOptionPane.showMessageDialog(null, "Invalid Snooze Length or Silence After Value");
         }
         else {
             try{
                 Statement stmt = koneksi.createStatement();
-                String query = "UPDATE `tb_setting` SET `silence_after` = "+silence_after+", `snooze_length` = "+snooze_length+", `start_week_on` = '"+StartWeekOn+"' WHERE `id_setting` = 1";
+                String query = "UPDATE `tb_setting` SET "
+                        + "`silence_after` = "+silence_after+", "
+                        + "`snooze_length` = "+snooze_length+", "
+                        + "`start_week_on` = '"+StartWeekOn+"', "
+                        + "`pomo_length` = '"+pomodoro_duration+"',"
+                        + "`pomo_break` = '"+break_duration+" WHERE `id_setting` = 1";
                 System.out.println(query);
                 int berhasil = stmt.executeUpdate(query);
                 if (berhasil == 1){
                     JOptionPane.showMessageDialog(null, "Data berhasil diubah");
-                
                 }
                 else {
                     JOptionPane.showMessageDialog(null, "Data gagal diubah");
@@ -285,6 +354,28 @@ public class Setting extends javax.swing.JDialog {
             }
         }
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jsPomodoroDurationMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jsPomodoroDurationMouseWheelMoved
+        // TODO add your handling code here:
+        int notches = evt.getWheelRotation();
+        if (notches < 0) {
+            jsPomodoroDuration.setValue(Integer.parseInt(jsPomodoroDuration.getValue().toString()) + 1);
+        }
+        else if (notches > 0) {
+            jsPomodoroDuration.setValue(Integer.parseInt(jsPomodoroDuration.getValue().toString()) - 1);
+        }
+    }//GEN-LAST:event_jsPomodoroDurationMouseWheelMoved
+
+    private void jsPomodoroBreakDurationMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_jsPomodoroBreakDurationMouseWheelMoved
+        // TODO add your handling code here:
+        int notches = evt.getWheelRotation();
+        if (notches < 0) {
+            jsPomodoroBreakDuration.setValue(Integer.parseInt(jsPomodoroBreakDuration.getValue().toString()) + 1);
+        }
+        else if (notches > 0) {
+            jsPomodoroBreakDuration.setValue(Integer.parseInt(jsPomodoroBreakDuration.getValue().toString()) - 1);
+        }
+    }//GEN-LAST:event_jsPomodoroBreakDurationMouseWheelMoved
 
     /**
      * @param args the command line arguments
@@ -324,12 +415,19 @@ public class Setting extends javax.swing.JDialog {
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSpinner jsPomodoroBreakDuration;
+    private javax.swing.JSpinner jsPomodoroDuration;
     private javax.swing.JSpinner jsSilenceAfter;
     private javax.swing.JSpinner jsSnoozeLength;
     // End of variables declaration//GEN-END:variables

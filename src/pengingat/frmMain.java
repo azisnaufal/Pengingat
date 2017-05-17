@@ -91,8 +91,8 @@ public class frmMain extends javax.swing.JFrame {
                 String alarm_name = rs.getString("alarm_name");
                 String filename = rs.getString("filedirname");
                 String time = rs.getString("time");
-                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi);
                 dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
+                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi,dtm);
                 trig.add(trigg);
                 trig.get(no).update(time, alarm_name, days, filename, enabled, repeat);
                 no++;

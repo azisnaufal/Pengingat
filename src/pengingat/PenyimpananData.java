@@ -18,6 +18,7 @@ public class PenyimpananData
 {
     public int SilenceAfter;
     public int SnoozeLength;
+    public int PomodoroDuration, BreakDuration;
     public String StartWeekOn;
     
     
@@ -106,6 +107,8 @@ public class PenyimpananData
                 SilenceAfter = rs.getInt("silence_after");
                 SnoozeLength = rs.getInt("snooze_length");
                 StartWeekOn = rs.getString("start_week_on");
+                PomodoroDuration = rs.getInt("pomo_length");
+                BreakDuration = rs.getInt("pomo_break");
                 no++;
             }
         } catch (SQLException ex) {

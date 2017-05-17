@@ -10,6 +10,7 @@ import java.sql.Connection;
 import javax.sound.sampled.Clip;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.table.DefaultTableModel;
 import javazoom.jl.player.advanced.AdvancedPlayer;
 
 /**
@@ -28,9 +29,11 @@ public class AlarmDialog extends javax.swing.JDialog {
     Connection koneksi;
     PenyimpananData pd;
     boolean repeat;
-    public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension, Connection koneksi,boolean repeat) {
+    DefaultTableModel dtm;
+    public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension, Connection koneksi,boolean repeat, DefaultTableModel dtm) {
         super(parent, modal);
         initComponents();
+        this.dtm = dtm;
         this.repeat =repeat;
         this.alarm_name = alarm_name;
         this.koneksi = koneksi;
@@ -144,7 +147,9 @@ public class AlarmDialog extends javax.swing.JDialog {
         }
         else{
             t.stop();
-        }   
+        }
+        dtm.getDataVector().removeAllElements();
+        new frmMain().showData();
         dispose();
         
     }//GEN-LAST:event_btnCloseActionPerformed
