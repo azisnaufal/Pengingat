@@ -20,13 +20,49 @@ public class PenyimpananData
     public int SnoozeLength;
     public int PomodoroDuration, BreakDuration;
     public String StartWeekOn;
-    
-    
+    public int pomo_minute, pomo_second;
     public String days = "";
     public Vector music = new Vector();
     Connection koneksi;
     public PenyimpananData(Connection koneksii){
         this.koneksi = koneksii;
+    }
+    public int isPomodoroRunning(){
+        try { Statement stmt = koneksi.createStatement();
+        String query = "SELECT * From tb_pomo_run";
+        ResultSet rs = stmt.executeQuery(query);
+        int no = 1;
+        int run = 0;
+        while (rs.next()) {
+            run = rs.getInt("run");
+        }
+        return run;
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            return 0;
+        }
+    }
+    public void PomodoroRun(int run){
+        try
+        {
+            // UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' , `alarm_name` = 'asuuuuuu' , `time` = '01:01:03' , `repeat` = '1' , `days` = 'Tuesday Wednesday' WHERE `id_alarm` = '17';
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE `db_pengingat`.`tb_pomo_run` SET `run` = '"+run+"';";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if (berhasil == 1)
+            {
+                System.out.println("run sukses");
+            }
+            else {
+                System.out.println("run gagal");
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
+        }
     }
     public void disableAlarm(int id_alarm){
         //UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' WHERE `id_alarm` = '22'; 

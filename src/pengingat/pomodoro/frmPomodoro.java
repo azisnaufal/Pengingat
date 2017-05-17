@@ -4,7 +4,12 @@
  * and open the template in the editor.
  */
 package pengingat.pomodoro;
-
+import java.awt.MenuItem;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Connection;
+import pengingat.*;
+import static pengingat.frmMain.trayPopupMenu;
 /**
  *
  * @author azisn
@@ -15,13 +20,18 @@ public class frmPomodoro extends javax.swing.JDialog {
      * Creates new form frmPomodoro
      */
     int duration, breaktime;
-    public frmPomodoro(java.awt.Frame parent, boolean modal, int duration, int breaktime) {
+    java.awt.Frame ortu;
+    Connection koneksi;
+    public frmPomodoro(java.awt.Frame parent, boolean modal, int duration, int breaktime, Connection koneksii) {
         super(parent, modal);
         this.duration = duration;
         this.breaktime = breaktime;
-        jLabel4.setText("in the next "+duration+" minutes.");
-        jLabel6.setText(" asking you to break for "+breaktime+" minutes.");
+        this.koneksi = koneksii;
         initComponents();
+        this.ortu = parent;
+        jLabel4.setText("in the next "+this.duration+" minutes.");
+        jLabel6.setText(" asking you to break for "+this.breaktime+" minutes.");
+        
     }
 
     /**
@@ -41,10 +51,12 @@ public class frmPomodoro extends javax.swing.JDialog {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnStart = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Start Pomodoro!");
+        setAlwaysOnTop(true);
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 24)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/pomodoro.png"))); // NOI18N
@@ -61,14 +73,19 @@ public class frmPomodoro extends javax.swing.JDialog {
 
         jLabel6.setText(" asking you to break for ... minutes.");
 
-        jButton1.setText("Start!");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnStart.setText("Start!");
+        btnStart.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnStartActionPerformed(evt);
             }
         });
 
         jButton2.setText("Cancel");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -97,7 +114,7 @@ public class frmPomodoro extends javax.swing.JDialog {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createSequentialGroup()
                 .addGap(78, 78, 78)
-                .addComponent(jButton1)
+                .addComponent(btnStart)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton2)
                 .addGap(90, 90, 90))
@@ -122,7 +139,7 @@ public class frmPomodoro extends javax.swing.JDialog {
                 .addComponent(jLabel6)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1)
+                    .addComponent(btnStart)
                     .addComponent(jButton2))
                 .addGap(18, 18, 18))
         );
@@ -130,14 +147,26 @@ public class frmPomodoro extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
         // TODO add your handling code here:
         // hide this jdialog
-        // show timer in windows notification
-        // add button "Take a break" to quckly take break;
+        setVisible(false);
         // after pomodoro period is over, then lockScreen();
+
+            new frmPomoRunn(duration, breaktime,koneksi).setVisible(true);
+
+    }//GEN-LAST:event_btnStartActionPerformed
+
+    private void restart(){
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }
+    private void pause(){
+        
+    }
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
     private void lockScreen(){
         // show "breaktime" remaining
         // show caption "It's time to take a break"
@@ -175,7 +204,7 @@ public class frmPomodoro extends javax.swing.JDialog {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnStart;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

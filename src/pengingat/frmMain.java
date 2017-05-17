@@ -4,7 +4,7 @@
 * and open the template in the editor.
 */
 package pengingat;
-
+import pengingat.pomodoro.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.Connection;
@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
-
+import pengingat.pomodoro.*;
 /**
  *
  * @author azisn
@@ -26,18 +26,34 @@ public class frmMain extends javax.swing.JFrame {
     /**
      * Creates new form frmMain
      */
+
     DefaultTableModel dtm;
     PenyimpananData pd;
     private java.util.List<TriggerTimer> trig = new ArrayList<>();
     Connection koneksi;
-    public frmMain() {
+    int minute,second;
+    Thread t;
+    public static SystemTray systemTray;
+    public static Image trayIconn;
+    public static TrayIcon trayIcon ;
+    public static PopupMenu trayPopupMenu ;
+    public frmMain(boolean isDialog) {
         initComponents();
-        koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
-        pd = new PenyimpananData(koneksi);
-        showData();
-        
+        if (!isDialog){
+            koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+            pd = new PenyimpananData(koneksi);
+            pd.setSettingData();
+            showData();
+            if (pd.isPomodoroRunning() == 1){
+                btnStartPomodoro.setVisible(false);
+                jSeparator1.setVisible(false);
+                lblPomoStat.setText("Your Pomodoro's is running!");
+            }
+        }
     }
-    
+    public void showNotif(String caption, String message){
+        trayIcon.displayMessage(caption, message, TrayIcon.MessageType.INFO);
+    }
     public void showData() {
         if (!trig.isEmpty()){
             int i  = 0;
@@ -124,11 +140,12 @@ public class frmMain extends javax.swing.JFrame {
         btnDelete = new javax.swing.JButton();
         btnRefresh = new javax.swing.JButton();
         jSeparator1 = new javax.swing.JToolBar.Separator();
-        jButton1 = new javax.swing.JButton();
+        btnStartPomodoro = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
         btnSetting = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
         btnExit = new javax.swing.JButton();
+        lblPomoStat = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Pengingat");
@@ -204,12 +221,17 @@ public class frmMain extends javax.swing.JFrame {
         jToolBar1.add(btnRefresh);
         jToolBar1.add(jSeparator1);
 
-        jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/pomodoro.png"))); // NOI18N
-        jButton1.setText("Start Pomodoro");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        jToolBar1.add(jButton1);
+        btnStartPomodoro.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/pomodoro.png"))); // NOI18N
+        btnStartPomodoro.setText("Start Pomodoro");
+        btnStartPomodoro.setFocusable(false);
+        btnStartPomodoro.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnStartPomodoro.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnStartPomodoro.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStartPomodoroActionPerformed(evt);
+            }
+        });
+        jToolBar1.add(btnStartPomodoro);
         jToolBar1.add(jSeparator2);
 
         btnSetting.setIcon(new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/preferences-other.png"))); // NOI18N
@@ -237,19 +259,27 @@ public class frmMain extends javax.swing.JFrame {
         });
         jToolBar1.add(btnExit);
 
+        lblPomoStat.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(161, 161, 161)
+                .addComponent(lblPomoStat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 346, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 328, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblPomoStat, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
@@ -310,6 +340,7 @@ public class frmMain extends javax.swing.JFrame {
         Setting s = new Setting(this, true, koneksi);
         s.setLocationRelativeTo(this);
         s.setVisible(true);
+        pd.setSettingData();
     }//GEN-LAST:event_btnSettingActionPerformed
 
     private void btnExitActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExitActionPerformed
@@ -320,6 +351,13 @@ public class frmMain extends javax.swing.JFrame {
             System.exit(0);
         }
     }//GEN-LAST:event_btnExitActionPerformed
+
+    private void btnStartPomodoroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartPomodoroActionPerformed
+        // TODO add your handling code here:
+        frmPomodoro pomo = new frmPomodoro(this, true, pd.PomodoroDuration, pd.BreakDuration, koneksi);
+        pomo.setLocationRelativeTo(this);
+        pomo.setVisible(true);
+    }//GEN-LAST:event_btnStartPomodoroActionPerformed
     
     /**
      * @param args the command line arguments
@@ -355,23 +393,30 @@ public class frmMain extends javax.swing.JFrame {
                     return ;
                 }
                 //get the systemTray of the system
-                SystemTray systemTray = SystemTray.getSystemTray();
+                systemTray = SystemTray.getSystemTray();
                 
                 //get default toolkit
                 //Toolkit toolkit = Toolkit.getDefaultToolkit();
                 //get image
                 //Toolkit.getDefaultToolkit().getImage("src/resources/busylogo.jpg");new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))
-                Image image = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
+                trayIconn = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
                 
                 //popupmenu
-                PopupMenu trayPopupMenu = new PopupMenu();
-                
+                trayPopupMenu = new PopupMenu();
+                MenuItem close = new MenuItem("Exit");
+                close.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+                trayPopupMenu.add(close);
                 //1t menuitem for popupmenu
                 MenuItem action = new MenuItem("Restore");
                 action.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        frmMain frame = new frmMain();
+                        frmMain frame = new frmMain(false);
                         frame.pack();
                         frame.setLocationByPlatform(true);
                         frame.setLocationRelativeTo(null);
@@ -381,23 +426,17 @@ public class frmMain extends javax.swing.JFrame {
                 trayPopupMenu.add(action);
                 
                 //2nd menuitem of popupmenu
-                MenuItem close = new MenuItem("Exit");
-                close.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.exit(0);
-                    }
-                });
-                trayPopupMenu.add(close);
+                
                 
                 //setting tray icon
-                TrayIcon trayIcon = new TrayIcon(image, "Pengingat", trayPopupMenu);
+                trayIcon= new TrayIcon(trayIconn, "Pengingat", trayPopupMenu);
                 //adjust to default size as per system recommendation
                 trayIcon.setImageAutoSize(true);
                 
                 try{
                     systemTray.add(trayIcon);
-                }catch(AWTException awtException){
+                }
+                catch(AWTException awtException){
                     awtException.printStackTrace();
                 }
                 try {
@@ -417,7 +456,7 @@ public class frmMain extends javax.swing.JFrame {
                 catch (IllegalAccessException e) {
                     // handle exception
                 }
-                frmMain frame = new frmMain();
+                frmMain frame = new frmMain(false);
                 frame.pack();
                 frame.setLocationByPlatform(true);
                 frame.setLocationRelativeTo(null);
@@ -432,14 +471,15 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JButton btnEdit;
     private javax.swing.JButton btnExit;
     private javax.swing.JButton btnNew;
-    private javax.swing.JButton btnRefresh;
+    public javax.swing.JButton btnRefresh;
     private javax.swing.JButton btnSetting;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnStartPomodoro;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JToolBar.Separator jSeparator1;
     private javax.swing.JToolBar.Separator jSeparator2;
     private javax.swing.JToolBar.Separator jSeparator3;
     private javax.swing.JToolBar jToolBar1;
+    private javax.swing.JLabel lblPomoStat;
     private javax.swing.JTable tbDataPengingat;
     // End of variables declaration//GEN-END:variables
 }

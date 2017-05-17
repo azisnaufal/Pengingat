@@ -272,7 +272,7 @@ public class Setting extends javax.swing.JDialog {
                         + "`snooze_length` = "+snooze_length+", "
                         + "`start_week_on` = '"+StartWeekOn+"', "
                         + "`pomo_length` = '"+pomodoro_duration+"',"
-                        + "`pomo_break` = '"+break_duration+" WHERE `id_setting` = 1";
+                        + "`pomo_break` = '"+break_duration+"' WHERE `id_setting` = 1";
                 System.out.println(query);
                 int berhasil = stmt.executeUpdate(query);
                 if (berhasil == 1){
@@ -338,7 +338,7 @@ public class Setting extends javax.swing.JDialog {
                         + "`snooze_length` = "+snooze_length+", "
                         + "`start_week_on` = '"+StartWeekOn+"', "
                         + "`pomo_length` = '"+pomodoro_duration+"',"
-                        + "`pomo_break` = '"+break_duration+" WHERE `id_setting` = 1";
+                        + "`pomo_break` = '"+break_duration+"' WHERE `id_setting` = 1";
                 System.out.println(query);
                 int berhasil = stmt.executeUpdate(query);
                 if (berhasil == 1){

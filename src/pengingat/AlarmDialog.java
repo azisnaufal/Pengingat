@@ -148,10 +148,9 @@ public class AlarmDialog extends javax.swing.JDialog {
         else{
             t.stop();
         }
-        dtm.getDataVector().removeAllElements();
-        new frmMain().showData();
-        dispose();
         
+        dispose();
+        new frmMain(false).btnRefresh.doClick();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
