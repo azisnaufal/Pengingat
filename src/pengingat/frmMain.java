@@ -60,7 +60,6 @@ public class frmMain extends javax.swing.JFrame {
             for (i = 0;i<trig.size();i++){
                 trig.get(i).doCancel();
             }
-            
         }
         String[] kolom = { "Enabled", "Alarm Name", "Time", "Repeat", "Days", "Music" };
         dtm = new DefaultTableModel(null, kolom){
@@ -110,7 +109,6 @@ public class frmMain extends javax.swing.JFrame {
                 dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
                 TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi,dtm);
                 trig.add(trigg);
-                trig.get(no).update(time, alarm_name, days, filename, enabled, repeat);
                 no++;
             }
         } catch (SQLException ex) {

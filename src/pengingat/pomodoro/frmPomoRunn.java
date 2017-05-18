@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
 import pengingat.*;
+import pengingat.pomodoro.lockscreen.*;
 
 /**
  *
@@ -113,6 +114,10 @@ public class frmPomoRunn extends javax.swing.JFrame {
         }
     }
     private void lockScreen(){
+        FrameDesign lock = new FrameDesign();
+        lock.setExtendedState(JFrame.MAXIMIZED_BOTH); 
+        lock.setVisible(true);
+        lock.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         
     }
     /**

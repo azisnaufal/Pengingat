@@ -105,8 +105,7 @@ public class TriggerTimer {
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
     }
-    
-    
+ 
     private void doAction(){
         if(isIsEnabled()) {
             if(tt != null) {
@@ -115,24 +114,22 @@ public class TriggerTimer {
             tt = new TimerTask() {
                 @Override
                 public void run() {
-                    if(repeat){
-                        if(dayss.contains(getCurrentDayStamp())){
-                            if(getCurrentTimeStamp().equals(getTime())){
+                    if(repeat && dayss.contains(getCurrentDayStamp()) && getCurrentTimeStamp().equals(getTime())){
+                       
                                 //                    Notification myNotification = new Notification(judul, deskripsi, "dialog-information"); // create the notification object
                                 //                    myNotification.show();
                                 AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,dtm);
                                 d.setLocationRelativeTo(null);
                                 d.setVisible(true);
-                                System.out.println(judul);
+                                System.out.println(judul + " repeat");
                                 t.cancel(); // buat keluar dari looping yang menyebalkan ini.
-                            }
-                        }
+                            
                     }
-                    else if(getCurrentTimeStamp().equals(getTime())){
+                    else if(getCurrentTimeStamp().equals(getTime())&& !repeat){
     //                    Notification myNotification = new Notification(judul, deskripsi, "dialog-information"); // create the notification object
     //                    myNotification.show();
                         //new AlarmDialog(null, true, judul, filedirMusic, fileextension).setVisible(true);
-                        System.out.println(judul);
+                        System.out.println(judul + " tidak repeat");
                         AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,dtm);
                                 d.setLocationRelativeTo(null);
                                 d.setVisible(true);
@@ -158,6 +155,8 @@ public class TriggerTimer {
         this.setJudul(judul);
         this.setDayss(dayss);
         this.setFiledirMusic(filedirMusic);
+        this.setRepeat(repeat);
+        this.setIsEnabled(isEnabled);
         this.setRepeat(repeat);
         if(isEnabled){
             doAction();
