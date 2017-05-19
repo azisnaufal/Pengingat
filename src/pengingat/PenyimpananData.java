@@ -5,6 +5,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Vector;
 import javax.swing.DefaultComboBoxModel;
@@ -26,6 +30,34 @@ public class PenyimpananData
     Connection koneksi;
     public PenyimpananData(Connection koneksii){
         this.koneksi = koneksii;
+    }
+    public void update_snooze_alarm(int id_alarm, String alarm_time) throws ParseException{
+        setSettingData();
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
+        Date d = df.parse(alarm_time);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(d);
+        cal.add(Calendar.MINUTE, SnoozeLength);
+        String newTime = df.format(cal.getTime());
+        try
+        {
+            // UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' , `alarm_name` = 'asuuuuuu' , `time` = '01:01:03' , `repeat` = '1' , `days` = 'Tuesday Wednesday' WHERE `id_alarm` = '17';
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE `db_pengingat`.`tb_alarm` SET `time` = '"+newTime+"' WHERE `id_alarm` = '"+id_alarm+"'; ";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if (berhasil == 1)
+            {
+                System.out.println("run sukses");
+            }
+            else {
+                System.out.println("run gagal");
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
+        }
     }
     public int isPomodoroRunning(){
         try { Statement stmt = koneksi.createStatement();
@@ -65,7 +97,7 @@ public class PenyimpananData
         }
     }
     public void disableAlarm(int id_alarm){
-        //UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' WHERE `id_alarm` = '22'; 
+        //UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' WHERE `id_alarm` = '22';
         try
         {
             // UPDATE `db_pengingat`.`tb_alarm` SET `enabled` = '0' , `alarm_name` = 'asuuuuuu' , `time` = '01:01:03' , `repeat` = '1' , `days` = 'Tuesday Wednesday' WHERE `id_alarm` = '17';
@@ -86,29 +118,29 @@ public class PenyimpananData
             JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
         }
     }
-    public void SimpanFileKeDb(String dir, String file, JComboBox jcbx) { 
-    String extension = file.substring(file.lastIndexOf("."), file.length());
-    dir = dir.replace("\\", "\\\\");
-    System.out.println(dir);
-    try {
-        Statement stmt = koneksi.createStatement();
-        String query = "INSERT INTO tb_music (`filedir`,`filename`, `fileextension`) VALUE('" + dir + "','" + file + "','" + extension + "')";
-        System.out.println(query);
-        int berhasil = stmt.executeUpdate(query);
-        if (berhasil == 1)
-        {
-            jcbx.removeAllItems();
-            jcbx.setModel(setMusictoCbx());
-            jcbx.setSelectedItem(file);
+    public void SimpanFileKeDb(String dir, String file, JComboBox jcbx) {
+        String extension = file.substring(file.lastIndexOf("."), file.length());
+        dir = dir.replace("\\", "\\\\");
+        System.out.println(dir);
+        try {
+            Statement stmt = koneksi.createStatement();
+            String query = "INSERT INTO tb_music (`filedir`,`filename`, `fileextension`) VALUE('" + dir + "','" + file + "','" + extension + "')";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if (berhasil == 1)
+            {
+                jcbx.removeAllItems();
+                jcbx.setModel(setMusictoCbx());
+                jcbx.setSelectedItem(file);
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");
+            }
         }
-        else {
-            JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
         }
-    }
-    catch (SQLException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
-    }
     }
     
     public DefaultComboBoxModel setMusictoCbx() {
@@ -259,6 +291,55 @@ public class PenyimpananData
             }
             else {
                 JOptionPane.showMessageDialog(null, "Data gagal dimasukkan");
+            }
+        }
+        catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Terjadi kesalahan dalam database");
+        }
+    }
+    public String getbg(){
+        try
+        {
+            Statement stmt = koneksi.createStatement();
+            String query = "SELECT\n" +
+"    `lock_filedirname`\n" +
+"FROM\n" +
+"    `db_pengingat`.`tb_setting`;\n" +
+"    ";
+            ResultSet rs = stmt.executeQuery(query);
+            System.out.println(query);
+            int no = 1;
+            String dir = "src/pengingat/pomodoro/lockscreen/8nky5y2.jpg";
+            while (rs.next()){
+                if (rs.getString("lock_filedirname").equals("")){
+                    break;
+                }
+                else{
+                    dir = rs.getString("lock_filedirname");
+                }
+            }
+            return dir;
+        }
+        catch (SQLException ex) {
+            System.out.println("Fallback wallpaper!"); }
+        return "src/pengingat/pomodoro/lockscreen/8nky5y2.jpg";
+    }
+    public void gantiBg(String filedirname){
+        filedirname = filedirname.replace("\\", "\\\\");
+        System.out.println(filedirname);
+        try {
+            Statement stmt = koneksi.createStatement();
+            String query = "UPDATE `db_pengingat`.`tb_setting` SET "
+                    + "`lock_filedirname` = '"+filedirname+"' WHERE `id_setting` = '1'; ";
+            System.out.println(query);
+            int berhasil = stmt.executeUpdate(query);
+            if (berhasil == 1)
+            {
+                JOptionPane.showMessageDialog(null, "Wallpaper Changed!");
+            }
+            else {
+                JOptionPane.showMessageDialog(null, "Failed to change wallpaper!");
             }
         }
         catch (SQLException ex) {

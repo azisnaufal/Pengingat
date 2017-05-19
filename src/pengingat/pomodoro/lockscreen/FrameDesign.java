@@ -12,8 +12,10 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
+import java.sql.Connection;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import pengingat.PenyimpananData;
 
 /**
  *
@@ -28,13 +30,17 @@ public class FrameDesign extends javax.swing.JFrame {
     private BufferedImage tinted;
     public int duration;
     AltTabStopper s ;
-    public FrameDesign(int duration) {
+    PenyimpananData pd;
+    Connection koneksii;
+    public FrameDesign(int duration, Connection koneksi) {
         initComponents();
+        this.koneksii = koneksi;
+        pd = new PenyimpananData(koneksii);
         this.duration = duration;
         this.s = new AltTabStopper(this);
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setLocationRelativeTo(null); // biar center
-        setBackgroundImage("src/pengingat/pomodoro/lockscreen/8nky5y2.jpg");
+        setBackgroundImage(pd.getbg());
     }
     
     // fungsi untuk ganti background biar mudah
@@ -87,6 +93,7 @@ public class FrameDesign extends javax.swing.JFrame {
                 }
                 while (delay != 0);
                 t.stop();
+                st.stop();
                 dispose();
             }
         }
@@ -110,6 +117,7 @@ public class FrameDesign extends javax.swing.JFrame {
         private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {
             // TODO add your handling code here:
             t.stop();
+            st.stop();
             dispose();
         }
         @Override

@@ -32,6 +32,7 @@ public class TriggerTimer {
     private Connection koneksi;
     private DefaultTableModel dtm;
     Timer t = null;
+    frmMain f;
     public static String getCurrentTimeStamp() {
         SimpleDateFormat sdfDate = new SimpleDateFormat("HH:mm:ss");//dd/MM/yyyy
         Date now = new Date();
@@ -46,7 +47,7 @@ public class TriggerTimer {
         return a;
         //update(time, judul, isEnabled);
     }
-    public TriggerTimer(String time, String judul,String dayss,String filedirMusic, boolean isEnabled,boolean repeat, Connection koneksii, DefaultTableModel dtm){
+    public TriggerTimer(String time, String judul,String dayss,String filedirMusic, boolean isEnabled,boolean repeat, Connection koneksii, frmMain f){
         this.dtm = dtm;
         this.time = time;
         this.judul = judul;
@@ -54,6 +55,7 @@ public class TriggerTimer {
         this.filedirMusic = filedirMusic;
         this.isEnabled = isEnabled;
         this.repeat = repeat;
+        this.f = f;
         this.koneksi = koneksii;
         this.fileextension = filedirMusic.substring(filedirMusic.lastIndexOf("."), filedirMusic.length());
         update(time, judul, dayss, filedirMusic, isEnabled, repeat);
@@ -118,10 +120,11 @@ public class TriggerTimer {
                        
                                 //                    Notification myNotification = new Notification(judul, deskripsi, "dialog-information"); // create the notification object
                                 //                    myNotification.show();
-                                AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,dtm);
+                                AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,f,getTime());
                                 d.setLocationRelativeTo(null);
                                 d.setVisible(true);
                                 System.out.println(judul + " repeat");
+                                
                                 t.cancel(); // buat keluar dari looping yang menyebalkan ini.
                             
                     }
@@ -130,9 +133,10 @@ public class TriggerTimer {
     //                    myNotification.show();
                         //new AlarmDialog(null, true, judul, filedirMusic, fileextension).setVisible(true);
                         System.out.println(judul + " tidak repeat");
-                        AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,dtm);
+                        AlarmDialog d = new AlarmDialog(null, true, judul, filedirMusic, fileextension,koneksi,repeat,f, getTime());
                                 d.setLocationRelativeTo(null);
                                 d.setVisible(true);
+                                
                         t.cancel(); // buat keluar dari looping yang menyebalkan ini.
                     }
                 }

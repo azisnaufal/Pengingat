@@ -7,12 +7,14 @@ package pengingat;
 
 import java.io.FileInputStream;
 import java.sql.Connection;
+import java.text.ParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.Clip;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
 import javazoom.jl.player.advanced.AdvancedPlayer;
-
 /**
  *
  * @author azisn
@@ -22,6 +24,7 @@ public class AlarmDialog extends javax.swing.JDialog {
     /**
      * Creates new form AlarmDialog
      */
+
     String filedir, fileextension,alarm_name;
     AdvancedPlayer player;
     AudioPlayer wavplayer;
@@ -30,9 +33,13 @@ public class AlarmDialog extends javax.swing.JDialog {
     PenyimpananData pd;
     boolean repeat;
     DefaultTableModel dtm;
-    public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension, Connection koneksi,boolean repeat, DefaultTableModel dtm) {
+    frmMain f;
+    String alarm_time;
+    public AlarmDialog(java.awt.Frame parent, boolean modal, String alarm_name, String filedir, String fileextension, Connection koneksi,boolean repeat, frmMain f, String alarm_time) {
         super(parent, modal);
         initComponents();
+        this.alarm_time = alarm_time;
+        this.f = f;
         this.dtm = dtm;
         this.repeat =repeat;
         this.alarm_name = alarm_name;
@@ -150,7 +157,8 @@ public class AlarmDialog extends javax.swing.JDialog {
         }
         
         dispose();
-        new frmMain(false).btnRefresh.doClick();
+        f.dtm.getDataVector().removeAllElements();
+        f.showData();
     }//GEN-LAST:event_btnCloseActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
@@ -164,12 +172,33 @@ public class AlarmDialog extends javax.swing.JDialog {
         else{
             t.stop();
         }
+        
+        dispose();
+        f.dtm.getDataVector().removeAllElements();
+        f.showData();
         //terus alter enabled jadi 0;
     }//GEN-LAST:event_formWindowClosing
 
     private void btnSnoozeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSnoozeActionPerformed
         // TODO add your handling code here:
         //harus bisa nambah ... dari setting
+        if (!repeat){
+        //pd.disableAlarm(pd.getIdAlarm(alarm_name));
+        }
+        if (fileextension.equals(".wav")){
+            wavplayer.stop();
+        }
+        else{
+            t.stop();
+        }
+        try {
+            pd.update_snooze_alarm(pd.getIdAlarm(alarm_name), alarm_time);
+        } catch (ParseException ex) {
+            System.out.println(ex);
+        }
+        dispose();
+        f.dtm.getDataVector().removeAllElements();
+        f.showData();
     }//GEN-LAST:event_btnSnoozeActionPerformed
 
     /**

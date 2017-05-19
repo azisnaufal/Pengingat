@@ -32,10 +32,12 @@ public class frmPomoRunn extends javax.swing.JFrame {
     int duration,breaktime;
     Thread t;
     Connection koneksi;
-    frmMain frame = new frmMain(true);
+    frmMain frame ;
     PenyimpananData pd;
-    public frmPomoRunn(int duration, int breaktime, Connection koneksii) {
+    MenuItem breakk;
+    public frmPomoRunn(int duration, int breaktime, Connection koneksii, frmMain frame) {
         initComponents();
+        this.frame = frame;
         this.koneksi = koneksii;
         this.duration = duration;
         this.breaktime = breaktime;
@@ -57,7 +59,7 @@ public class frmPomoRunn extends javax.swing.JFrame {
         // show timer in windows notification
         frame.showNotif("Focus on your task", "For more action, please check your system tray!");
         // add button "Take a break" to quckly take break;
-                MenuItem breakk = new MenuItem("Take a break!");
+                breakk = new MenuItem("Take a break!");
                 breakk.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -104,6 +106,8 @@ public class frmPomoRunn extends javax.swing.JFrame {
             lockScreen();
             pd.PomodoroRun(0);
             t.stop();
+            dispose();
+            
         }
     }
         public static class FrameDragListener extends MouseAdapter {
@@ -129,7 +133,7 @@ public class frmPomoRunn extends javax.swing.JFrame {
         }
     }
     private void lockScreen(){
-        FrameDesign lock = new FrameDesign(breaktime);
+        FrameDesign lock = new FrameDesign(breaktime, koneksi);
         lock.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         lock.setVisible(true);
         lock.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

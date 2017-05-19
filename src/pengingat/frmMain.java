@@ -37,18 +37,88 @@ public class frmMain extends javax.swing.JFrame {
     public static Image trayIconn;
     public static TrayIcon trayIcon ;
     public static PopupMenu trayPopupMenu ;
+    private void Systray(){
+        //checking for support
+                if(!SystemTray.isSupported()){
+                    System.out.println("System tray is not supported !!! ");
+                    return ;
+                }
+                //get the systemTray of the system
+                systemTray = SystemTray.getSystemTray();
+                
+                //get default toolkit
+                //Toolkit toolkit = Toolkit.getDefaultToolkit();
+                //get image
+                //Toolkit.getDefaultToolkit().getImage("src/resources/busylogo.jpg");new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))
+                trayIconn = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
+                
+                //popupmenu
+                trayPopupMenu = new PopupMenu();
+                MenuItem close = new MenuItem("Exit");
+                close.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        System.exit(0);
+                    }
+                });
+                trayPopupMenu.add(close);
+                //1t menuitem for popupmenu
+                MenuItem action = new MenuItem("Restore");
+                action.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        
+                        pack();
+                        setLocationByPlatform(true);
+                        setLocationRelativeTo(null);
+                        setVisible(true);
+                    }
+                });
+                trayPopupMenu.add(action);
+                
+                //2nd menuitem of popupmenu
+               
+                //setting tray icon
+                trayIcon= new TrayIcon(trayIconn, "Pengingat", trayPopupMenu);
+                //adjust to default size as per system recommendation
+                trayIcon.setImageAutoSize(true);
+                trayIcon.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        
+                        if (e.getButton() == MouseEvent.BUTTON1 && isVisible() == false) {
+                            pack();
+                            setLocationByPlatform(true);
+                            setLocationRelativeTo(null);
+                            setVisible(true);
+                            if (pd.isPomodoroRunning() == 1){
+                                btnStartPomodoro.setVisible(false);
+                                jSeparator1.setVisible(false);
+                                lblPomoStat.setText("Your Pomodoro's is running!");
+                            }
+                        }
+                    }
+                });
+                try{
+                    systemTray.add(trayIcon);
+                }
+                catch(AWTException awtException){
+                    awtException.printStackTrace();
+                }
+    }
     public frmMain(boolean isDialog) {
         initComponents();
+        Systray();
+        koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+        pd = new PenyimpananData(koneksi);
+        pd.setSettingData();
+        if (pd.isPomodoroRunning() == 1){
+            btnStartPomodoro.setVisible(false);
+            jSeparator1.setVisible(false);
+            lblPomoStat.setText("Your Pomodoro's is running!");
+        }
         if (!isDialog){
-            koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
-            pd = new PenyimpananData(koneksi);
-            pd.setSettingData();
             showData();
-            if (pd.isPomodoroRunning() == 1){
-                btnStartPomodoro.setVisible(false);
-                jSeparator1.setVisible(false);
-                lblPomoStat.setText("Your Pomodoro's is running!");
-            }
         }
     }
     public void showNotif(String caption, String message){
@@ -107,7 +177,7 @@ public class frmMain extends javax.swing.JFrame {
                 String filename = rs.getString("filedirname");
                 String time = rs.getString("time");
                 dtm.addRow(new Object[] { Boolean.valueOf(enabled), alarm_name, time, Boolean.valueOf(repeat), days, filename });
-                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi,dtm);
+                TriggerTimer trigg = new TriggerTimer(time, alarm_name, days, filename, enabled, repeat,koneksi,this);
                 trig.add(trigg);
                 no++;
             }
@@ -160,6 +230,7 @@ public class frmMain extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tbDataPengingat.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
         tbDataPengingat.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbDataPengingatMouseClicked(evt);
@@ -352,7 +423,7 @@ public class frmMain extends javax.swing.JFrame {
 
     private void btnStartPomodoroActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartPomodoroActionPerformed
         // TODO add your handling code here:
-        frmPomodoro pomo = new frmPomodoro(this, true, pd.PomodoroDuration, pd.BreakDuration, koneksi);
+        frmPomodoro pomo = new frmPomodoro(this, true, pd.PomodoroDuration, pd.BreakDuration, koneksi, this);
         pomo.setLocationRelativeTo(this);
         pomo.setVisible(true);
     }//GEN-LAST:event_btnStartPomodoroActionPerformed
@@ -385,58 +456,6 @@ public class frmMain extends javax.swing.JFrame {
         //</editor-fold>
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                //checking for support
-                if(!SystemTray.isSupported()){
-                    System.out.println("System tray is not supported !!! ");
-                    return ;
-                }
-                //get the systemTray of the system
-                systemTray = SystemTray.getSystemTray();
-                
-                //get default toolkit
-                //Toolkit toolkit = Toolkit.getDefaultToolkit();
-                //get image
-                //Toolkit.getDefaultToolkit().getImage("src/resources/busylogo.jpg");new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))
-                trayIconn = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
-                
-                //popupmenu
-                trayPopupMenu = new PopupMenu();
-                MenuItem close = new MenuItem("Exit");
-                close.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        System.exit(0);
-                    }
-                });
-                trayPopupMenu.add(close);
-                //1t menuitem for popupmenu
-                MenuItem action = new MenuItem("Restore");
-                action.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        frmMain frame = new frmMain(false);
-                        frame.pack();
-                        frame.setLocationByPlatform(true);
-                        frame.setLocationRelativeTo(null);
-                        frame.setVisible(true);
-                    }
-                });
-                trayPopupMenu.add(action);
-                
-                //2nd menuitem of popupmenu
-                
-                
-                //setting tray icon
-                trayIcon= new TrayIcon(trayIconn, "Pengingat", trayPopupMenu);
-                //adjust to default size as per system recommendation
-                trayIcon.setImageAutoSize(true);
-                
-                try{
-                    systemTray.add(trayIcon);
-                }
-                catch(AWTException awtException){
-                    awtException.printStackTrace();
-                }
                 try {
                     // Set System L&F
                     UIManager.setLookAndFeel(
