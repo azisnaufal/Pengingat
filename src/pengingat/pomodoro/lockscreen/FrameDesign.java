@@ -1,8 +1,8 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+* To change this license header, choose License Headers in Project Properties.
+* To change this template file, choose Tools | Templates
+* and open the template in the editor.
+*/
 
 package pengingat.pomodoro.lockscreen;
 
@@ -13,6 +13,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.image.BufferedImage;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 
 /**
  *
@@ -25,11 +26,14 @@ public class FrameDesign extends javax.swing.JFrame {
     private BufferedImage master;
     private BufferedImage mask;
     private BufferedImage tinted;
-    
-
-    public FrameDesign() {
+    public int duration;
+    AltTabStopper s ;
+    public FrameDesign(int duration) {
         initComponents();
-        setLocationRelativeTo(null); // biar center
+        this.duration = duration;
+        this.s = new AltTabStopper(this);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //setLocationRelativeTo(null); // biar center
         setBackgroundImage("src/pengingat/pomodoro/lockscreen/8nky5y2.jpg");
     }
     
@@ -42,7 +46,7 @@ public class FrameDesign extends javax.swing.JFrame {
         double width = screenSize.getWidth();
         double height = screenSize.getHeight();
         Image image = ic.getImage().getScaledInstance((int) width, (int) height, Image.SCALE_SMOOTH);
-      
+        
         // Ganti BG ;)
         this.setContentPane(new BackgroundPanel(image));
     }
@@ -50,18 +54,73 @@ public class FrameDesign extends javax.swing.JFrame {
     // extends dari Panel yg di buat
     public class BackgroundPanel extends PanelDesign {
         private Image image;
-
+        Thread t, st;
+        public class MyThread implements Runnable  {
+            public void run(){
+                int timet  = duration * 60;
+                long delay = timet * 1000;
+                do {
+                    int minutes = timet / 60;
+                    int seconds = timet % 60;
+                    String sMinute = minutes + "";
+                String sSeconds = seconds + "";
+                if (sMinute.length() == 1){
+                    jLabel1.setText("0"+minutes+":"+seconds + " Remaining");
+                    if (sSeconds.length() == 1){
+                       jLabel1.setText("0"+minutes+":0"+seconds + " Remaining"); 
+                    }
+                }
+                else if (sSeconds.length() == 1){
+                    jLabel1.setText(minutes+":0"+seconds  + " Remaining");
+                    if (sMinute.length() == 1){
+                       jLabel1.setText("0"+minutes+":0"+seconds + " Remaining"); 
+                    }
+                }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+                        System.out.println(ex);
+                    }
+                    timet = timet - 1;
+                    delay = delay - 1000;
+                    
+                }
+                while (delay != 0);
+                t.stop();
+                dispose();
+            }
+        }
+        public class MySecThread implements Runnable  {
+            public void run(){
+                s.run();
+            }
+        }
         public BackgroundPanel(Image image) {
             this.image = image;
+            jLabel3.addMouseListener(new java.awt.event.MouseAdapter() {
+                public void mouseClicked(java.awt.event.MouseEvent evt) {
+                    jLabel3MouseClicked(evt);
+                }
+            });
+            t = new Thread(new MyThread());
+            st = new Thread(new MySecThread());
+            st.start();
+            t.start();
         }
-
+        private void jLabel3MouseClicked(java.awt.event.MouseEvent evt) {
+            // TODO add your handling code here:
+            t.stop();
+            dispose();
+        }
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g); //To change body of generated methods, choose Tools | Templates.
             g.drawImage(image, 0, 0, this);
         }
+        
+        
     }
-
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -71,36 +130,24 @@ public class FrameDesign extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLayeredPane1 = new javax.swing.JLayeredPane();
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setAlwaysOnTop(true);
         setUndecorated(true);
-
-        javax.swing.GroupLayout jLayeredPane1Layout = new javax.swing.GroupLayout(jLayeredPane1);
-        jLayeredPane1.setLayout(jLayeredPane1Layout);
-        jLayeredPane1Layout.setHorizontalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
-        );
-        jLayeredPane1Layout.setVerticalGroup(
-            jLayeredPane1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
-        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1)
+            .addGap(0, 400, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1)
+            .addGap(0, 300, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
     /**
      * @param args the command line arguments
      */
@@ -108,8 +155,8 @@ public class FrameDesign extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+        * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
+        */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -127,16 +174,11 @@ public class FrameDesign extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(FrameDesign.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new FrameDesign().setVisible(true);
-            }
-        });
-    }
 
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLayeredPane jLayeredPane1;
     // End of variables declaration//GEN-END:variables
 }

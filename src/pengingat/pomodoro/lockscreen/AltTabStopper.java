@@ -8,9 +8,13 @@ public class AltTabStopper implements Runnable
 {
      private boolean working = true;
      private JFrame frame;
-
+     public AltTabStopper(JFrame frame){
+         this.frame = frame;
+         
+     }
      public void run()
      {
+         
          try
          {
              Robot robot = new Robot();
@@ -19,6 +23,7 @@ public class AltTabStopper implements Runnable
                   robot.keyRelease(KeyEvent.VK_ALT);
                   robot.keyRelease(KeyEvent.VK_TAB);
                   robot.keyRelease(KeyEvent.VK_WINDOWS);
+                  robot.keyPress(KeyEvent.VK_WINDOWS);
                   robot.keyRelease(KeyEvent.VK_S);
                   robot.keyRelease(KeyEvent.VK_D);
                   robot.keyRelease(KeyEvent.VK_E);

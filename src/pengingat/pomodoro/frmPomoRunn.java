@@ -63,6 +63,7 @@ public class frmPomoRunn extends javax.swing.JFrame {
                     public void actionPerformed(ActionEvent e) {
                         lockScreen();
                         pd.PomodoroRun(0);
+                        t.stop();
                         dispose();
                         frame.trayPopupMenu.remove(breakk);
                     }
@@ -76,7 +77,20 @@ public class frmPomoRunn extends javax.swing.JFrame {
             do {
                 int minutes = timet / 60;
                 int seconds = timet % 60;
-                jLabel1.setText(minutes+":"+seconds);
+                String sMinute = minutes + "";
+                String sSeconds = seconds + "";
+                if (sMinute.length() == 1){
+                    jLabel1.setText("0"+minutes+":"+seconds);
+                    if (sSeconds.length() == 1){
+                       jLabel1.setText("0"+minutes+":0"+seconds); 
+                    }
+                }
+                else if (sSeconds.length() == 1){
+                    jLabel1.setText(minutes+":0"+seconds);
+                    if (sMinute.length() == 1){
+                       jLabel1.setText("0"+minutes+":0"+seconds); 
+                    }
+                }
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException ex) {
@@ -89,6 +103,7 @@ public class frmPomoRunn extends javax.swing.JFrame {
             while (delay != 0);
             lockScreen();
             pd.PomodoroRun(0);
+            t.stop();
         }
     }
         public static class FrameDragListener extends MouseAdapter {
@@ -114,7 +129,7 @@ public class frmPomoRunn extends javax.swing.JFrame {
         }
     }
     private void lockScreen(){
-        FrameDesign lock = new FrameDesign();
+        FrameDesign lock = new FrameDesign(breaktime);
         lock.setExtendedState(JFrame.MAXIMIZED_BOTH); 
         lock.setVisible(true);
         lock.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
