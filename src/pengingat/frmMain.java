@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.table.DefaultTableModel;
@@ -235,6 +236,9 @@ public class frmMain extends javax.swing.JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tbDataPengingatMouseClicked(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tbDataPengingatMousePressed(evt);
+            }
         });
         jScrollPane1.setViewportView(tbDataPengingat);
 
@@ -353,7 +357,7 @@ public class frmMain extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    int baris;
+    int baris = -1;
     private void tbDataPengingatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataPengingatMouseClicked
         // TODO add your handling code here:
         baris = tbDataPengingat.getSelectedRow();
@@ -371,12 +375,18 @@ public class frmMain extends javax.swing.JFrame {
     
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
         // TODO add your handling code here:
-        String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
-        NewAlarm frame = new NewAlarm(this, true, "Edit", alarm_namee, koneksi);
-        frame.setLocationRelativeTo(this);
-        frame.setVisible(true);
-        dtm.getDataVector().removeAllElements();
-        showData();
+        if(baris == -1){
+            JOptionPane.showMessageDialog(this, "You haven't clicked the row!", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+        else{
+            String alarm_namee = tbDataPengingat.getValueAt(baris, 1).toString();
+            NewAlarm frame = new NewAlarm(this, true, "Edit", alarm_namee, koneksi);
+            frame.setLocationRelativeTo(this);
+            frame.setVisible(true);
+            dtm.getDataVector().removeAllElements();
+            showData();
+        }
+        
 //        boolean enabled = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 0).toString());
 //        String time = tbDataPengingat.getValueAt(baris, 2).toString();
 //        boolean repeat = Boolean.parseBoolean(tbDataPengingat.getValueAt(baris, 4).toString());
@@ -427,6 +437,16 @@ public class frmMain extends javax.swing.JFrame {
         pomo.setLocationRelativeTo(this);
         pomo.setVisible(true);
     }//GEN-LAST:event_btnStartPomodoroActionPerformed
+
+    private void tbDataPengingatMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbDataPengingatMousePressed
+        // TODO add your handling code here:
+        JTable table = (JTable)evt.getSource();
+        Point p = evt.getPoint();
+        int row = tbDataPengingat.rowAtPoint(p);
+        if(evt.getClickCount() == 2){
+            JOptionPane.showMessageDialog(this, "Trying to edit this value? \n Click the edit button!", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_tbDataPengingatMousePressed
     
     /**
      * @param args the command line arguments
