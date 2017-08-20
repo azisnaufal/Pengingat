@@ -3,24 +3,15 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/cbxDaysSaturday.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat.icon/document-new.png</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/cbxDaysMonday.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/TriggerTimer.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/frmPomodoro.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/lockscreen/FrameDesign.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/Setting.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/frmMain.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/cbxDaysSundays.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/AlarmDialog.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/AudioPlayer.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/lockscreen/AltTabStopper.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/PenyimpananData.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/DatabaseConnection.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/frmPomoRunn.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/NewAlarm.java</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/lockscreen/8nky5y2.jpg</file>
-            <file>file:/F:/Pindahan%20C/Documents/NetBeans%20Project/Pengingat/src/pengingat/pomodoro/lockscreen/PanelDesign.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/cbxDaysSundays.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/frmMain.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/NewAlarm.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/PenyimpananData.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/cbxDaysSaturday.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/DatabaseConnection.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/SettingPanel.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/AudioPlayer.java</file>
+            <file>file:/home/oazisn/NetBeansProjects/Pengingat/src/pengingat/AlarmDialog.java</file>
         </group>
     </open-files>
 </project-private>

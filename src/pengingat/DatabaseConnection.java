@@ -5,8 +5,14 @@
  */
 package pengingat;
 
+import java.awt.HeadlessException;
+import java.io.*;
+import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
 
 /**
@@ -14,10 +20,9 @@ import javax.swing.JOptionPane;
  * @author oazisn
  */
 public class DatabaseConnection {
-     public static Connection getKoneksi(String host, String port, 
+    public static Connection getKoneksi(String host, String port, 
 	String username, String password, String db) {
-        String konString = "jdbc:mysql://" + host + ":" + port + 
-		"/" + db;
+        String konString = "jdbc:mysql://" + host + "/" + db;
         Connection koneksi = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
@@ -25,8 +30,8 @@ public class DatabaseConnection {
             System.out.println("Koneksi Berhasil");
         } catch (Exception ex) {
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Koneksi Database Error");
-            koneksi = null;
+            JOptionPane.showMessageDialog(null, "Failed to connect to MySQL Server or Database Not Found!");
+
         }
         return koneksi;
     }

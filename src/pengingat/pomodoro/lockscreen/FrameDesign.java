@@ -41,6 +41,7 @@ public class FrameDesign extends javax.swing.JFrame {
         setExtendedState(JFrame.MAXIMIZED_BOTH);
         //setLocationRelativeTo(null); // biar center
         setBackgroundImage(pd.getbg());
+        System.out.println(pd.getbg());
     }
     
     // fungsi untuk ganti background biar mudah

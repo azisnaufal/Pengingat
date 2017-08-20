@@ -29,6 +29,7 @@ public class frmMain extends javax.swing.JFrame {
      */
 
     DefaultTableModel dtm;
+    SettingPanel sp ;
     PenyimpananData pd;
     private java.util.List<TriggerTimer> trig = new ArrayList<>();
     Connection koneksi;
@@ -38,6 +39,7 @@ public class frmMain extends javax.swing.JFrame {
     public static Image trayIconn;
     public static TrayIcon trayIcon ;
     public static PopupMenu trayPopupMenu ;
+    String icon, username, host, password, port, db;
     private void Systray(){
         //checking for support
                 if(!SystemTray.isSupported()){
@@ -51,7 +53,7 @@ public class frmMain extends javax.swing.JFrame {
                 //Toolkit toolkit = Toolkit.getDefaultToolkit();
                 //get image
                 //Toolkit.getDefaultToolkit().getImage("src/resources/busylogo.jpg");new javax.swing.ImageIcon(getClass().getResource("/pengingat.icon/edit-find-replace.png"))
-                trayIconn = Toolkit.getDefaultToolkit().getImage("F:\\Pindahan C\\Documents\\NetBeans Project\\Pengingat\\src\\pengingat.icon\\java.png");
+                trayIconn = Toolkit.getDefaultToolkit().getImage(icon);
                 
                 //popupmenu
                 trayPopupMenu = new PopupMenu();
@@ -109,8 +111,14 @@ public class frmMain extends javax.swing.JFrame {
     }
     public frmMain(boolean isDialog) {
         initComponents();
+        sp = new SettingPanel();
+        icon = sp.getValue("Icon");
+        host = sp.getValue("host");
+        username = sp.getValue("username");
+        password = sp.getValue("password");
+        db = sp.getValue("db");
         Systray();
-        koneksi = DatabaseConnection.getKoneksi("localhost", "3306", "root", "", "db_pengingat");
+        koneksi = DatabaseConnection.getKoneksi(host,port,username,"",db);
         pd = new PenyimpananData(koneksi);
         pd.setSettingData();
         if (pd.isPomodoroRunning() == 1){
@@ -153,7 +161,7 @@ public class frmMain extends javax.swing.JFrame {
                     " , `tb_alarm`.`repeat`    \n" +
                     " , `tb_alarm`.`days`    \n" +
                     " , `tb_music`.`filename`\n" +
-                    " , CONCAT(`tb_music`.`filedir`,\"\\\\\",`tb_music`.`filename`) AS filedirname\n" +
+                    " , CONCAT (`tb_music`.`filedir`,\"/\",`tb_music`.`filename`) AS filedirname\n" +
                     "  FROM    `db_pengingat`.`tb_alarm`    INNER JOIN `db_pengingat`.`tb_music` ON (`tb_alarm`.`id_music` = `tb_music`.`id_music`)";
             ResultSet rs = stmt.executeQuery(query);
             int no = 0;
@@ -519,4 +527,5 @@ public class frmMain extends javax.swing.JFrame {
     private javax.swing.JLabel lblPomoStat;
     private javax.swing.JTable tbDataPengingat;
     // End of variables declaration//GEN-END:variables
+
 }
